@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Admin Dashboard</title>
+  <script>
+    function searchTable() {
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("usersTable");
+      tr = table.getElementsByTagName("tr");
+
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0]; // Search in the first column (First Name)
+
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <h1>Admin Dashboard</h1>
+
+  <!-- Search input field -->
+  <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search by First Name">
+
+  <table border="1" id="usersTable">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Street Address</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip Code</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% usersAndEmployees.forEach(user => { %>
+        <tr>
+          <td><%= user.firstName %></td>
+          <td><%= user.lastName %></td>
+          <td><%= user.email %></td>
+          <td><%= user.phone %></td>
+          <td><%= user.streetAddress %></td>
+          <td><%= user.city %></td>
+          <td><%= user.state %></td>
+          <td><%= user.zipCode %></td>
+          <td><%= user.role %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+<!-- Logout button -->
+<form action="/logout" method="POST">
+    <button type="submit">Logout</button>
+  </form>
+
+</html>

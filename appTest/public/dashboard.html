@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="/styles/style.css"> 
+</head>
+<body>
+    <div class="container">
+        <h2>User Dashboard</h2>
+        <div class="welcome-message">
+            <h3>Welcome <span id="firstName"></span>, <span id="role"></span></h3>
+        </div>
+        <button onclick="logout()">Logout</button> 
+    </div>
+
+    <div class="footer"> 
+        <button class="admin-login-btn" onclick="redirectToAdminLoginPage()">Admin Login</button>
+    </div>
+
+    <!-- Link the dashboard.js file -->
+    <script src="/scripts/dashboard.js"></script>
+</body>
+</html>

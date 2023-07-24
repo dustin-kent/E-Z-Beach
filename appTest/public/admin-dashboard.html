@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/styles/style.css"> 
+</head>
+<body>
+    <div class="container">
+        <h2>Admin Dashboard</h2>
+        <div class="users-employees">
+            <h3>Users and Employees</h3>
+            <ul>
+                <% usersAndEmployees.forEach(function(user) { %>
+                    <li><%= user.firstName %> - <%= user.role %></li>
+                <% }) %>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <!-- Admin Logout button -->
+        <button class="admin-logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Import the logout script -->
+    <script src="/scripts/logout.js"></script>
+</body>
+</html>
