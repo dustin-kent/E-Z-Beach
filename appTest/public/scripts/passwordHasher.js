@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 
 async function generateAdminHashedPassword() {
-  const adminPassword = 'xxxxxx'; // Replace 'your_admin_password' with the desired password for the admin user
+  const adminPassword = 'xxxxxxx'; // Replace 'your_admin_password' with the desired password for the admin user
   const saltRounds = 10;
 
   try {

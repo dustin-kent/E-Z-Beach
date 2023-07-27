@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>E-Z Beach Style Guide</title>
+
+    <!-- Site theme -->
+    <link rel="stylesheet" type="text/css" href="css/theme.css">
+   
+
+    <!--  Place Custom Styles Below -->
+    <style>
+        body {
+            font-family: "Helvetica", "Times New Roman", "Myriad Pro";
+            color: black;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+
+        h3 {
+            font-size: 16px;
+        }
+
+        button {
+            background-color: rgb(35, 97, 197);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+        }
+
+        select {
+            background-color: #ffffff;
+            border-radius: 2px;
+            padding: 5px;
+            
+        }
+
+        .inputLabel {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input.inputField {
+            padding: 5px;
+            border: 1px; border-radius: 5px; border-style:solid; border-color:#000000;
+        }
+
+        div.box {
+            height: 100px;
+            width: 100px;
+            display: inline-block;
+            margin: 0 10px 0 10px;
+        }
+
+        #primary1 {
+            background-color: rgb(255, 255, 255);
+        }
+
+        #primary2 {
+            background-color: rgb(0, 0, 0);
+        }
+
+        #primary3 {
+            background-color: #F5420C;
+        }
+
+        #primary4 {
+            background-color: rgb(100, 193, 201);
+        }
+
+        #primary5 {
+            background-color: rgb(35, 97, 197);
+        }
+
+        #primary6 {
+            background-color: rgb(112, 199, 97);
+        }
+
+        #primary7 {
+            background-color: rgb(192, 102, 233);
+        }
+
+        
+
+        
+
+        .warning {
+            background-color: yellow;
+            font-weight: bold;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .danger {
+            background-color: red;
+            font-weight: bold;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: green;
+            font-weight: bold;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        svg.svg-inline--fa {
+            color: white;
+        }
+
+        .spacer {
+            margin-top: 25px;
+        }
+
+        #footer {
+            border-top: 1px solid #dddddd;
+            margin-top: 50px;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+	<!-- Include script for font awesome icon library and google fonts -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
+</head>
+
+<body>
+    <a name="Top"></a>
+    <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="#">
+                    <span class="navbar-brand">
+                        <i class="fas fa-home"></i>E-Z Beach. Interface Style Guide</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-md-3">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="#font">Font</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#colorTheme">Color Theme</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#headings">Headings</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#buttons">Buttons</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#formElements">Form Elements</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#messages">Messages</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <!-- About -->
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <a name="about"></a>My Styles</h1>
+                </div>
+                <p>This page contains specific style guide information for E-Z Beach's front end interface.</p>
+            </div>
+            <!-- End About -->
+
+            <!-- Fonts -->
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <a name="fonts"></a>Font</h1>
+                </div>
+                <p>E-Z Beach utilizes the following font styles (Utilize Theme Colors):</p>
+                    <p style="font-family: Helvetica"> Helvetica </p>
+                    <p style="font-family: Times New Roman"> Times New Roman </p>
+                    <p style="font-family: Myriad Pro"> Myriad Pro </p>
+                   
+            </div>
+            <div class="spacer">
+                <a href="#Top">Back to Top</a>
+            </div>
+            <!-- End Fonts -->
+
+            <!-- Color Theme -->
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <a name="colorTheme"></a>Color Theme</h1>
+                </div>
+                <p>E-Z Beach. incorporates the below color scheme in its interface.</p>
+                <div class="box" id="primary1" style="border-width:3px; border-radius: 15px 45px 15px 45px; border-style:solid; border-color:#000000;"></div> 
+                <div class="box" id="primary2" style="border-width:3px; border-radius: 15px 45px 15px 45px; border-style:solid; border-color:#000000;"></div>
+                <div class="box" id="primary3" style="border-width:3px; border-radius: 15px 45px 15px 45px; border-style:solid; border-color:#000000;"></div> 
+                <div class="box" id="primary4" style="border-width:3px; border-radius: 15px 45px 15px 45px; border-style:solid; border-color:#000000;"></div>
+                <div class="box" id="primary5" style="border-width:3px; border-radius: 15px 45px 15px 45px; border-style:solid; border-color:#000000;"></div>
+                <div class="box" id="primary6" style="border-width:3px; border-radius: 15px 45px 15px 45px; border-style:solid; border-color:#000000;"></div>
+                <div class="box" id="primary7" style="border-width:3px; border-radius: 15px 45px 15px 45px; border-style:solid; border-color:#000000;"></div>
+            </div>
+            <div class="spacer">
+                <a href="#Top">Back to Top</a>
+            </div>
+            <!-- End Color Theme -->
+
+            <!-- Headings -->
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <a name="headings"></a>Headings</h1>
+                </div>
+                <p>The below font sizes and styles are used in the application for various content headings.</p>
+                <h1>Heading 1</h1>
+                <h2>Heading 2</h2>
+                <h3>Heading 3</h3>
+            </div>
+            <div class="spacer">
+                <a href="#Top">Back to Top</a>
+            </div>
+            <!-- End Headings -->
+
+            <!-- Buttons -->
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <a name="buttons"></a>Buttons</h1>
+                </div>
+                <p>The application will feature buttons that contain the below color and shape:</p>
+                <button>My Button</button>
+                <br>
+                <br>
+                <input type="radio" id="css" name="select" value="Please Select">
+                <label for="select">Please Select</label><br>
+            </div>
+            <div class="spacer">
+                <a href="#Top">Back to Top</a>
+            </div>
+            <!-- End Buttons -->
+
+            <!-- Form Elements -->
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <a name="formElements"></a>Form Elements</h1>
+                </div>
+                <p>For the varous forms that the application will contain, it will contain input fields and labels with the below styling:</p>
+                <form>
+                    <label for="name" class="inputLabel">Name</label>
+                    <input type="input" id="name" class="inputField" value="">
+                </form>
+            </div>
+            <div class="spacer">
+                <a href="#Top">Back to Top</a>
+            </div>
+            <!-- End Form Elements -->
+
+            <!-- User Messages -->
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <a name="messages"></a>Messages</h1>
+                </div>
+                <p>For various completed tasks, application notifications will be presented to the user based.  The following contextual messages will be used.</p>
+                <p class="warning">Warning!</p>
+                <p class="danger">Danger!</p>
+                <p class="success">Success!</p>
+            </div>
+            <div class="spacer">
+                <a href="#Top">Back to Top</a>
+            </div>
+            <!-- End User Messages -->
+        </div>
+    </div>
+    <div id="footer">
+        <div class="container">
+            <p class="text-muted">Copyright E-Z Beach. Style Guide</p>
+        </div>
+    </div>
+</body>
+
+</html>
