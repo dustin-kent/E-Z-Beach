@@ -20,12 +20,26 @@ body {
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px; /* Increase the gap between inputs and buttons */
+    width: 80%; /* Adjust the width of the login form */
+    max-width: 400px; /* Limit the max-width of the form on large screens */
 }
 
+/* Make the email and password input fields bigger */
+input[type="email"],
+input[type="password"] {
+    padding: 10px;
+    font-size: 16px; /* Increase font size */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+/* Make the buttons bigger and add some padding */
 .login-btn,
 .create-account-btn {
-    padding: 10px 20px;
+    padding: 12px 30px;
+    font-size: 18px; /* Increase font size */
     border: none;
     border-radius: 5px;
     cursor: pointer;
