@@ -97,3 +97,18 @@ input[type="password"] {
 .beach-text {
     font-family: 'Great Vibes', cursive;
 }
+
+/* Adjust font size for smaller screens */
+@media screen and (max-width: 600px) {
+    body {
+      font-size: 14px;
+    }
+  }
+  
+  /* Adjust layout for smaller screens */
+  @media screen and (max-width: 768px) {
+    .container {
+      max-width: 90%;
+    }
+  }
+  
