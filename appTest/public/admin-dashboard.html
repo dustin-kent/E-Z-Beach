@@ -19,10 +19,13 @@
 
     <div class="footer">
         <!-- Admin Logout button -->
-        <button class="admin-logout-btn" onclick="logout()">Logout</button>
+        <form action="/logout" method="POST"> <!-- Add a form to handle the logout POST request -->
+            <button type="submit" class="admin-logout-btn">Logout</button>
+        </form>
     </div>
 
     <!-- Import the logout script -->
     <script src="/scripts/logout.js"></script>
 </body>
 </html>
+

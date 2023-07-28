@@ -2,8 +2,20 @@ const express = require('express');
 const mongodb = require('mongodb');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
+const uuid = require('uuid');
 const app = express();
 const port = 3000;
+
+
+// Middleware to prevent caching of pages
+app.use((req, res, next) => {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
+});
+
 
 // MongoDB connection details
 const dbURI = 'mongodb://127.0.0.1:27017';
@@ -17,6 +29,20 @@ app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Generate a random UUID as the secret key
+const secretKey = uuid.v4();
+
+// Use the session middleware
+app.use(session({
+  secret: secretKey,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Change to 'true' if using HTTPS
+    httpOnly: true,
+  },
+}));
 
 // POST route to handle user registration
 app.post('/submit-user', async (req, res) => {
@@ -82,14 +108,11 @@ app.post('/login', async (req, res) => {
     }
 
     if (user.role === 'admin') {
-      // Redirect the admin to the admin dashboard
       res.redirect('/admin-dashboard');
     } else {
-      // Redirect the user/employee to their dashboard with first name and role / just for testing at the momment.  more code/expansion to come
       res.redirect(`/dashboard.html?firstName=${user.firstName}&role=${user.role}`);
     }
 
-    // Close the MongoDB connection
     client.close();
   } catch (error) {
     console.error('Error during login:', error);
@@ -119,13 +142,10 @@ app.post('/admin-login', async (req, res) => {
       return res.send('Invalid email or password. Please try again.');
     }
 
-    // Fetch all users and employees from the database
     const usersAndEmployees = await db.collection('users').find({}).toArray();
 
-    // Render the admin-dashboard.ejs page and pass the users and employees data as variables
     res.render('admin-dashboard', { usersAndEmployees });
 
-    // Close the MongoDB connection
     client.close();
   } catch (error) {
     console.error('Error during admin login:', error);
@@ -139,13 +159,10 @@ app.get('/admin-dashboard', async (req, res) => {
     const client = await mongodb.MongoClient.connect(dbURI);
     const db = client.db(dbName);
 
-    // Fetch all users and employees from the database
     const usersAndEmployees = await db.collection('users').find({}).toArray();
 
-    // Render the admin-dashboard.ejs page and pass the users and employees data as variables
     res.render('admin-dashboard', { usersAndEmployees });
 
-    // Close the MongoDB connection
     client.close();
   } catch (error) {
     console.error('Error during admin dashboard:', error);
@@ -155,9 +172,14 @@ app.get('/admin-dashboard', async (req, res) => {
 
 // POST route to handle user logout
 app.post('/logout', (req, res) => {
- 
-  // Respond with a success status code (200) to indicate successful logout
-  res.redirect('/login-page.html');
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+    } else {
+      console.log('User logged out successfully.');
+    }
+    res.redirect('/login-page.html');
+  });
 });
 
 // Start the server
