@@ -99,7 +99,46 @@ app.post('/submit-user', async (req, res) => {
   }
 });
 
+// Function to submit admin data to the database
+app.post('/submit-admin', async (req, res) => {
+  try {
+    const client = await mongodb.MongoClient.connect(dbURI);
+    const db = client.db(dbName);
 
+    const adminData = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      // Hash the password before saving it to the database
+      password: await bcrypt.hash(req.body.password, 10),
+      role: 'admin', // Add the "role" field with the value "admin"
+    };
+
+    const existingAdmin = await db.collection('admin').findOne({ email: adminData.email });
+
+    if (existingAdmin) {
+      client.close();
+      return res.send('An admin account with this email address already exists.');
+    }
+
+    // Insert the admin data into the "admin" collection
+    await db.collection('admin').insertOne(adminData);
+
+    await client.close();
+
+    // Redirect back to the admin dashboard after successfully creating the admin account
+    res.redirect('/admin-dashboard');
+  } catch (error) {
+    console.error('Error saving admin data:', error);
+    res.status(500).send('An error occurred while saving the admin data.');
+  }
+});
+
+
+
+
+// POST route to handle user login
+// ... (Your existing code above)
 
 // POST route to handle user login
 app.post('/login', async (req, res) => {
@@ -124,8 +163,10 @@ app.post('/login', async (req, res) => {
     }
 
     if (user.role === 'admin') {
+      // Redirect to the admin dashboard if the user is an admin
       res.redirect('/admin-dashboard');
     } else {
+      // Redirect to the regular dashboard for other roles
       res.redirect(`/dashboard.html?firstName=${user.firstName}&role=${user.role}`);
     }
 
@@ -135,6 +176,9 @@ app.post('/login', async (req, res) => {
     res.status(500).send('An error occurred during login.');
   }
 });
+
+// ... (Your existing code below)
+
 
 // POST route to handle admin login
 app.post('/admin-login', async (req, res) => {
