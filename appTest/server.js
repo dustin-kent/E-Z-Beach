@@ -69,14 +69,14 @@ app.post('/submit-user', async (req, res) => {
       city: req.body.city,
       state: req.body.state,
       zipCode: req.body.zipCode,
-      role: req.body.role, // Assuming the role is coming from a checkbox (e.g., "user" or "employee")
+      role: req.body.role, // role is coming from a checkbox (e.g., "user" or "employee")
     };
 
-    console.log('userData:', userData); // Add this console.log to see the userData object
+    console.log('userData:', userData); // Add this console.log to see the userData object  REMOVE LATER AFTER TESTING
 
     const existingUser = await db.collection('users').findOne({ email: userData.email });
 
-    console.log('existingUser:', existingUser); // Add this console.log to see the existing user, if any
+    console.log('existingUser:', existingUser); // Add this console.log to see the existing user, if any   REMOVE LATER AFTER TESTING
 
     if (existingUser) {
       client.close();
