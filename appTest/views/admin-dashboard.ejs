@@ -1,72 +1,117 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <title>Admin Dashboard</title>
-  <script>
-    function searchTable() {
-      var input, filter, table, tr, td, i, txtValue;
-      input = document.getElementById("searchInput");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("usersTable");
-      tr = table.getElementsByTagName("tr");
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/styles/style.css"> 
 
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[0]; // Search in the first column (First Name)
+    <script>
+        function searchTable(tableId, firstNameIndex, lastNameIndex) {
+            var input, filter, table, tr, tdFirstName, tdLastName, i, txtValueFirstName, txtValueLastName;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById(tableId);
+            tr = table.getElementsByTagName("tr");
 
-        if (td) {
-          txtValue = td.textContent || td.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
+            for (i = 0; i < tr.length; i++) {
+                tdFirstName = tr[i].getElementsByTagName("td")[firstNameIndex];
+                tdLastName = tr[i].getElementsByTagName("td")[lastNameIndex];
+
+                if (tdFirstName && tdLastName) {
+                    txtValueFirstName = tdFirstName.textContent || tdFirstName.innerText;
+                    txtValueLastName = tdLastName.textContent || tdLastName.innerText;
+
+                    if (txtValueFirstName.toUpperCase().indexOf(filter) > -1 || txtValueLastName.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
 </head>
-
 <body>
-  <h1>Admin Dashboard</h1>
+    <h1>Admin Dashboard</h1>
 
-  <!-- Search input field -->
-  <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search by First Name">
+    <!-- Search input field -->
+    <input type="text" id="searchInput" onkeyup="searchTable('usersTable', 1, 2)" placeholder="Search by First Name or Last Name">
 
-  <table border="1" id="usersTable">
-    <thead>
-      <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Street Address</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Zip Code</th>
-        <th>Role</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% usersAndEmployees.forEach(user => { %>
-        <tr>
-          <td><%= user.firstName %></td>
-          <td><%= user.lastName %></td>
-          <td><%= user.email %></td>
-          <td><%= user.phone %></td>
-          <td><%= user.streetAddress %></td>
-          <td><%= user.city %></td>
-          <td><%= user.state %></td>
-          <td><%= user.zipCode %></td>
-          <td><%= user.role %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+    <div class="users-employees">
+        <h3>Users</h3>
+        <table border="1" id="usersTable">
+            <thead>
+                <tr>
+                    <th>User ID#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Address</th>
+                    <th>State</th>
+                    <th>Zip Code</th>
+                    <th>Phone Number</th>
+                    <th>Role</th>
+                    <!-- Add more table headers here if needed -->
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <% if (user.role === 'user') { %>
+                        <tr>
+                            <td><%= user._id %></td>
+                            <td><%= user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1) %></td>
+                            <td><%= user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1) %></td>
+                            <td><%= user.streetAddress.charAt(0).toUpperCase() + user.streetAddress.slice(1) %></td>
+                            <td><%= user.state.toUpperCase() %></td>
+                            <td><%= user.zipCode %></td>
+                            <td><%= user.phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') %></td>
+                            <td><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></td>
+                            <!-- Add more table columns here if needed -->
+                        </tr>
+                    <% } %>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="employees">
+        <h3>Employees</h3>
+        <table border="1" id="employeesTable">
+            <thead>
+                <tr>
+                    <th>User ID#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Address</th>
+                    <th>State</th>
+                    <th>Zip Code</th>
+                    <th>Phone Number</th>
+                    <th>Role</th>
+                    <!-- Add more table headers here if needed -->
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <% if (user.role === 'employee') { %>
+                        <tr>
+                            <td><%= user._id %></td>
+                            <td><%= user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1) %></td>
+                            <td><%= user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1) %></td>
+                            <td><%= user.streetAddress.charAt(0).toUpperCase() + user.streetAddress.slice(1) %></td>
+                            <td><%= user.state.toUpperCase() %></td>
+                            <td><%= user.zipCode %></td>
+                            <td><%= user.phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') %></td>
+                            <td><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></td>
+                            <!-- Add more table columns here if needed -->
+                        </tr>
+                    <% } %>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Logout button -->
+    <form action="/logout" method="POST">
+        <button type="submit">Logout</button>
+    </form>
+
 </body>
-<!-- Logout button -->
-<form action="/logout" method="POST">
-    <button type="submit">Logout</button>
-  </form>
-
 </html>

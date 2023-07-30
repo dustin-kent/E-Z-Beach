@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Information Form</title>
+</head>
+<body>
+    <h2>Admin Information</h2>
+    <form action="/submit-user" method="POST"> 
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required><br>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required><br>
+
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required><br>
+
+        
+
+        <p>Please Select Account Type:</p>
+        <label>
+            
+            <input type="hidden" name="role" value="admin">
+
+        </label>
+      
+        <input type="submit" value="Submit">
+    </form>
+
+    <script src="/scripts/validatePassword.js"></script> <!-- Link to external script -->
+</body>
+</html>

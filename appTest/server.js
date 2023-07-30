@@ -7,7 +7,6 @@ const uuid = require('uuid');
 const app = express();
 const port = 3000;
 
-
 // Middleware to prevent caching of pages
 app.use((req, res, next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -15,7 +14,6 @@ app.use((req, res, next) => {
   res.header('Pragma', 'no-cache');
   next();
 });
-
 
 // MongoDB connection details
 const dbURI = 'mongodb://127.0.0.1:27017';
@@ -44,13 +42,24 @@ app.use(session({
   },
 }));
 
-// POST route to handle user registration
+// Function to capitalize the first letter of a string
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+// Function to format the phone number with dashes
+function formatPhoneNumber(phone) {
+  const cleaned = ('' + phone).replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  return match ? match[1] + '-' + match[2] + '-' + match[3] : phone;
+}
+
+// Function to submit user/employee to database
 app.post('/submit-user', async (req, res) => {
   try {
     const client = await mongodb.MongoClient.connect(dbURI);
     const db = client.db(dbName);
 
-    // Get the form data from the request
     const userData = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -60,10 +69,14 @@ app.post('/submit-user', async (req, res) => {
       city: req.body.city,
       state: req.body.state,
       zipCode: req.body.zipCode,
-      role: req.body.role,
+      role: req.body.role, // Assuming the role is coming from a checkbox (e.g., "user" or "employee")
     };
 
+    console.log('userData:', userData); // Add this console.log to see the userData object
+
     const existingUser = await db.collection('users').findOne({ email: userData.email });
+
+    console.log('existingUser:', existingUser); // Add this console.log to see the existing user, if any
 
     if (existingUser) {
       client.close();
@@ -74,6 +87,7 @@ app.post('/submit-user', async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
     userData.password = hashedPassword;
 
+    // Insert the user data into the "users" collection
     await db.collection('users').insertOne(userData);
 
     await client.close();
@@ -84,6 +98,8 @@ app.post('/submit-user', async (req, res) => {
     res.status(500).send('An error occurred while saving the user data.');
   }
 });
+
+
 
 // POST route to handle user login
 app.post('/login', async (req, res) => {
@@ -128,7 +144,12 @@ app.post('/admin-login', async (req, res) => {
 
     const { email, password } = req.body;
 
-    const admin = await db.collection('users').findOne({ email, role: 'admin' });
+    console.log('Email:', email);
+    console.log('Password:', password);
+
+    const admin = await db.collection('admin').findOne({ email });
+
+    console.log('Admin:', admin);
 
     if (!admin) {
       client.close();
@@ -142,9 +163,16 @@ app.post('/admin-login', async (req, res) => {
       return res.send('Invalid email or password. Please try again.');
     }
 
-    const usersAndEmployees = await db.collection('users').find({}).toArray();
+    const users = await db.collection('users').find({}).toArray();
+    const employees = await db.collection('employees').find({}).toArray();
+    const admins = [admin]; // Convert the admin object into an array
 
-    res.render('admin-dashboard', { usersAndEmployees });
+    console.log('Admins:', admins);
+
+    // Set a session variable to indicate that the user is logged in as an admin
+    req.session.isAdmin = true;
+
+    res.render('admin-dashboard', { users, employees, admins });
 
     client.close();
   } catch (error) {
@@ -156,12 +184,20 @@ app.post('/admin-login', async (req, res) => {
 // GET route to handle admin dashboard
 app.get('/admin-dashboard', async (req, res) => {
   try {
+    // Check if the user is logged in as an admin
+    if (!req.session.isAdmin) {
+      return res.redirect('/admin-login-page.html'); // Redirect to the admin login page if not logged in as admin
+    }
+
     const client = await mongodb.MongoClient.connect(dbURI);
     const db = client.db(dbName);
 
-    const usersAndEmployees = await db.collection('users').find({}).toArray();
+    const users = await db.collection('users').find({}).toArray();
+    const employees = await db.collection('employees').find({}).toArray();
+    const admins = await db.collection('admin').find({}).toArray();
 
-    res.render('admin-dashboard', { usersAndEmployees });
+    console.log('Admins:', admins);
+    res.render('admin-dashboard', { users, employees, admins });
 
     client.close();
   } catch (error) {
