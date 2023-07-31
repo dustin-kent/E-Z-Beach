@@ -1,3 +1,4 @@
+const dotenv = require('dotenv'); // Require the dotenv package
 const express = require('express');
 const mongodb = require('mongodb');
 const path = require('path');
@@ -7,6 +8,10 @@ const uuid = require('uuid');
 const app = express();
 const port = 3000;
 
+// Load the environment variables from the .env file
+dotenv.config();
+
+
 // Middleware to prevent caching of pages
 app.use((req, res, next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -15,9 +20,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// MongoDB connection details
-const dbURI = 'mongodb://127.0.0.1:27017';
-const dbName = 'apptest-db';
+// MongoDB connection details read from environment variables
+const dbURI = process.env.DB_URI;
+const dbName = process.env.DB_NAME;
 
 // Set the "views" folder to specify where to find the templates
 app.set('views', path.join(__dirname, 'views'));
