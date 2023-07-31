@@ -193,9 +193,7 @@ app.post('/admin-login', async (req, res) => {
 
     const { email, password } = req.body;
 
-    console.log('Email:', email);
-    console.log('Password:', password);
-
+   
     const admin = await db.collection('admin').findOne({ email });
 
     console.log('Admin:', admin);
