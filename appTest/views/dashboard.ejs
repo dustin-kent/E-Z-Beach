@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@1,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="/styles/dashboard-style.css"> 
+</head>
+<body>
+    <div class="container">
+        <h2>User Dashboard</h2>
+        <div class="welcome-message">
+            <h3>Welcome <span id="firstName"><%= user.firstName %></span>, <%= user.role %></h3>
+        </div>
+
+        <% if (user.role === 'user') { %>
+            <!-- Display user-specific links -->
+            <div class="links-container">
+                <div class="circle-container">
+                    <a href="#" onclick="redirectToScheduleReservationPage()">Schedule Reservation</a> 
+                </div>
+                <div class="circle-container">
+                    <a href="#">View Pending Reservation</a>
+                </div>
+                <div class="circle-container">
+                    <a href="#">View History</a>
+                </div>
+            </div>
+        <% } else if (user.role === 'employee') { %>
+            <!-- Display employee-specific links -->
+            <div class="links-container">
+                <div class="circle-container">
+                    <a href="#">View Available Reservations</a>
+                </div>
+                <div class="circle-container">
+                    <a href="#">Pending Jobs</a>
+                </div>
+                <div class="circle-container">
+                    <a href="#">View History</a>
+                </div>
+            </div>
+        <% } %>
+
+        <form action="/logout" method="POST"> 
+            <button type="submit" class="admin-logout-btn">Logout</button>
+        </form>
+    </div>
+
+    <div class="footer"> 
+        <button class="admin-login-btn" onclick="redirectToAdminLoginPage()">Admin Login</button>
+    </div>
+    
+    <script src="/scripts/dashboard.js"></script>
+</body>
+</html>

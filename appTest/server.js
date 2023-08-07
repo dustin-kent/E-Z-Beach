@@ -1,4 +1,4 @@
-const dotenv = require('dotenv'); // Require the dotenv package
+const dotenv = require('dotenv'); 
 const express = require('express');
 const mongodb = require('mongodb');
 const path = require('path');
@@ -59,6 +59,28 @@ function formatPhoneNumber(phone) {
   return match ? match[1] + '-' + match[2] + '-' + match[3] : phone;
 }
 
+app.post('/submit-reservation', async (req, res) => {
+  try {
+    const client = await mongodb.MongoClient.connect(dbURI);
+    const db = client.db(dbName);
+
+    const reservationData = {
+      fullName: req.body.fullName,
+      date: req.body.reservationDate,
+      time: req.body.reservationTime,
+      // Add other reservation details as needed
+    };
+
+    await client.close();
+
+    // Redirect to a success page or perform other actions
+    res.render('reservation-success', { reservationData, time: ampmTime });
+  } catch (error) {
+    console.error('Error saving reservation data:', error);
+    res.status(500).send('An error occurred while saving the reservation data.');
+  }
+});
+
 // Function to submit user/employee to database
 app.post('/submit-user', async (req, res) => {
   try {
@@ -74,14 +96,14 @@ app.post('/submit-user', async (req, res) => {
       city: req.body.city,
       state: req.body.state,
       zipCode: req.body.zipCode,
-      role: req.body.role, // role is coming from a checkbox (e.g., "user" or "employee")
+      role: req.body.role, 
     };
 
-    console.log('userData:', userData); // Add this console.log to see the userData object  REMOVE LATER AFTER TESTING
+    console.log('userData:', userData); // Add this console.log to see the userData object  REMOVE LATER AFTER TESTING!!!!!!
 
     const existingUser = await db.collection('users').findOne({ email: userData.email });
 
-    console.log('existingUser:', existingUser); // Add this console.log to see the existing user, if any   REMOVE LATER AFTER TESTING
+    console.log('existingUser:', existingUser); // Add this console.log to see the existing user, if any   REMOVE LATER AFTER TESTING!!!!!!!
 
     if (existingUser) {
       client.close();
@@ -140,11 +162,6 @@ app.post('/submit-admin', async (req, res) => {
 });
 
 
-
-
-// POST route to handle user login
-// ... (Your existing code above)
-
 // POST route to handle user login
 app.post('/login', async (req, res) => {
   try {
@@ -167,12 +184,15 @@ app.post('/login', async (req, res) => {
       return res.send('Invalid email or password. Please try again.');
     }
 
+    // Set the user object in the session
+    req.session.user = user;
+
     if (user.role === 'admin') {
       // Redirect to the admin dashboard if the user is an admin
       res.redirect('/admin-dashboard');
     } else {
       // Redirect to the regular dashboard for other roles
-      res.redirect(`/dashboard.html?firstName=${user.firstName}&role=${user.role}`);
+      res.redirect('/dashboard');
     }
 
     client.close();
@@ -182,7 +202,28 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// ... (Your existing code below)
+// Route to render the dashboard for both user and employee
+app.get('/dashboard', (req, res) => {
+  // Check if the user is logged in
+  if (!req.session.user) {
+    return res.redirect('/login-page.html'); // Redirect to login page if not logged in
+  }
+
+  // GET route to render the schedule-reservation-page.ejs
+app.get('/schedule-reservation-page', (req, res) => {
+  const timeIntervals = generateTimeIntervals(600, 1200, 5); // Generate 5-minute intervals from 6:00 AM to 8:00 PM
+  res.render('schedule-reservation-page', { user: req.session.user, timeIntervals });
+});
+
+  // Render the dashboard.ejs template and pass the user object to it
+  res.render('dashboard', { user: req.session.user });
+});
+
+
+// GET route to render the schedule-reservation-page.ejs
+app.get('/schedule-reservation-page', (req, res) => {
+  res.render('schedule-reservation-page', { user: req.session.user }); 
+});
 
 
 // POST route to handle admin login
@@ -263,6 +304,65 @@ app.post('/logout', (req, res) => {
     }
     res.redirect('/login-page.html');
   });
+});
+
+// Function to generate time intervals in AM/PM format from start to end time
+function generateTimeIntervals(startTime, endTime, intervalMinutes) {
+  const timeIntervals = [];
+  let time = startTime;
+  while (time <= endTime) {
+    const hour = Math.floor(time / 100);
+    const minute = time % 100;
+    if (minute < 60) {
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+      // Ensure minutes are within the range of 0 to 59
+      m = Math.min(Math.max(0, m), 59);
+      const formattedMinute = minute.toString().padStart(2, '0');
+      const timeString = `${formattedHour}:${formattedMinute} ${ampm}`;
+      timeIntervals.push({ value: time, label: timeString });
+    }
+    // Increment time correctly for both hours and minutes
+    time += formattedMinute === '55' ? (60 - minute) + (intervalMinutes - 5) : intervalMinutes;
+  }
+  return timeIntervals;
+}
+
+
+
+// Add a new item to the beach gear collection
+app.post('/api/beach-gear/add', async (req, res) => {
+  try {
+    const newItem = req.body;
+    await BeachGear.create(newItem);
+    res.status(201).json({ message: 'Item added successfully.' });
+  } catch (error) {
+    console.error('Error adding item:', error);
+    res.status(500).json({ error: 'An error occurred while adding the item.' });
+  }
+});
+
+// Remove an item from the beach gear collection
+app.post('/api/beach-gear/remove', async (req, res) => {
+  try {
+    const itemId = req.body.itemId;
+    await BeachGear.findByIdAndRemove(itemId);
+    res.json({ message: 'Item removed successfully.' });
+  } catch (error) {
+    console.error('Error removing item:', error);
+    res.status(500).json({ error: 'An error occurred while removing the item.' });
+  }
+});
+
+// Get all items from the beach gear collection
+app.get('/api/beach-gear/all', async (req, res) => {
+  try {
+    const allItems = await BeachGear.find();
+    res.json(allItems);
+  } catch (error) {
+    console.error('Error fetching items:', error);
+    res.status(500).json({ error: 'An error occurred while fetching items.' });
+  }
 });
 
 // Start the server

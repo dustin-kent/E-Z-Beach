@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-Z Beach</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@1,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/schedule-reservation-style.css"> 
+</head>
+<body>
+    <div class="header">
+        <h1>E-Z Beach</h1>
+        <p>Hello <%= user.firstName %></p>
+        <button class="home-button" onclick="redirectToDashboard()">Home</button>
+        <button type="submit">Submit Reservation</button>
+    </div>
+
+    <div class="container">
+        <div class="reservation-form">
+            <form action="/submit-reservation" method="POST">
+                <!-- Reservation Details -->
+                <div class="reservation-details">
+                    <h2>Reservation Details</h2>
+                    <input type="text" name="fullName" placeholder="Full Name" required>
+                    <input type="date" name="reservationDate" required>
+                    <label for="setupTakedown">Setup/Takedown</label>
+                    <select name="setupTakedown" id="setupTakedown">
+                        <option value="setup">Setup</option>
+                        <option value="takedown">Takedown</option>
+                    </select>
+                    <!-- Add the updated time input with AM/PM format -->
+                    <label for="reservationTime">Time:</label>
+                    <select id="reservationTime" name="reservationTime"></select>
+                </div>
+            </form>
+        </div>
+        <div class="beach-gear">
+            <!-- Beach Gear Section -->
+            <h2>Beach Gear</h2>
+            <div class="beach-gear-items">
+                <h3>Choose Your Beach Gear:</h3>
+                <select id="beachGearItem" onchange="updateQuantityOptions()">
+                    <option value="">Select an item</option>
+                    <!-- Add all beach gear items dynamically here using JavaScript -->
+                </select>
+                <select id="quantitySelect" disabled>
+                    <option value="">Select quantity</option>
+                    <!-- The quantity options will be populated dynamically using JavaScript -->
+                </select>
+                <button onclick="addToCart()">Add to Cart</button>
+            </div>
+        </div>
+        <div class="cart-wrapper">
+            <div class="cart-header">
+            <div class="cart">
+                <!-- Cart Section -->
+                <h2>Cart</h2>
+                </div>
+            </div>    
+                <ul id="cartItems">
+                    <!-- The cart items will be populated dynamically using JavaScript -->
+                </ul>
+                <!-- Element to display the total price of the cart -->
+                <div id="cartTotal">$0.00</div>
+            </div>
+        </div>    
+    </div>
+
+    <script>
+        const timeSelect = document.getElementById("reservationTime");
+        const startTime = 600; // 6:00 AM in 24-hour format
+        const endTime = 2000; // 8:00 PM in 24-hour format
+
+        for (let i = startTime; i <= endTime; i += 5) {
+            const hour = Math.floor(i / 100);
+            const minute = (i % 100).toString().padStart(2, '0');
+
+            // Skip invalid time slots (e.g., 60, 65, 70, etc.)
+            if (minute >= 60) {
+                continue;
+            }
+
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+            const optionText = `${formattedHour}:${minute} ${ampm}`;
+            const optionValue = i.toString();
+            const option = new Option(optionText, optionValue);
+            timeSelect.appendChild(option);
+        }
+    </script>
+    <script src="/scripts/dashboard.js"></script>
+    <script src="/scripts/beach_gear.js"></script>
+</body>
+</html>

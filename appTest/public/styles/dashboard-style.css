@@ -1,0 +1,153 @@
+/* Specific styles for the dashboard */
+body {
+    background-image: url("beach.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    max-width: 100%;
+}
+
+/* Additional CSS for the header */
+.header {
+    background: linear-gradient(to right, rgba(255, 255, 0, 0.7), rgba(255, 165, 0, 0.7), rgba(128, 0, 128, 0.7));
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 48px;
+    font-weight: normal;
+    letter-spacing: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Style for the "User Dashboard" title */
+h2 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+/* Style for the welcome message */
+.welcome-message {
+    font-family: 'Raleway', sans-serif;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+/* Style for the links container */
+.links-container {
+    display: flex;
+    justify-content: center; /* Center the circles horizontally */
+    gap: 20px; /* Add some space between the circles */
+    flex-wrap: wrap; /* Allow the circles to wrap to the next line if needed */
+}
+
+/* Style for each circular container */
+.circle-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, transform 0.2s ease-in-out; /* Add transition for smooth effect */
+    overflow: hidden; /* Prevent the beachball image from overflowing outside the circle */
+}
+
+/* Style for the links inside the circular containers */
+.circle-container a {
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    margin: 0; /* Remove margin */
+    padding: 0; /* Remove padding */
+    border: none; /* Remove border */
+    text-align: center; /* Center the text horizontally and vertically */
+    color: white; /* Set default text color to white */
+}
+
+/* Hover effect to make the links transform into a beach ball and display rainbow text */
+.circle-container a:hover {
+    background-image: url("beachball.png"); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: rainbowAnimation 5s infinite, rotateBackAnimation 2s 1; /* Apply the rainbow text animation */
+    
+}
+
+/* Animation to create the rainbow text effect */
+@keyframes rainbowAnimation {
+    0% { color: red; }
+    16.67% { color: orange; }
+    33.33% { color: yellow; }
+    50% { color: green; }
+    66.67% { color: blue; }
+    83.33% { color: indigo; }
+    100% { color: violet; }
+}
+
+@keyframes rotateBackAnimation {
+    0% { transform: rotate(45deg); }
+    50% { transform: rotate(-45deg); }
+    100% { transform: rotate(45deg); }
+}
+
+/* Style for the logout button */
+.admin-logout-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* Style for the admin login button in the footer */
+.admin-login-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Adjust font size for smaller screens */
+@media screen and (max-width: 600px) {
+    h2 {
+        font-size: 36px;
+    }
+
+    .welcome-message {
+        font-size: 16px;
+    }
+
+    .circle-container a {
+        font-size: 16px;
+    }
+}
+
+/* Adjust layout for smaller screens */
+@media screen and (max-width: 768px) {
+    .container {
+        max-width: 90%;
+    }
+}
