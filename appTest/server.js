@@ -1,5 +1,6 @@
 const dotenv = require('dotenv'); 
 const express = require('express');
+const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
 const path = require('path');
 const bcrypt = require('bcrypt');
@@ -58,28 +59,56 @@ function formatPhoneNumber(phone) {
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
   return match ? match[1] + '-' + match[2] + '-' + match[3] : phone;
 }
-
+//save reservation data into a collection called "pending reservations"
 app.post('/submit-reservation', async (req, res) => {
+  console.log('Received form data:', req.body); // Log received data
   try {
     const client = await mongodb.MongoClient.connect(dbURI);
     const db = client.db(dbName);
 
+  
+
     const reservationData = {
       fullName: req.body.fullName,
-      date: req.body.reservationDate,
-      time: req.body.reservationTime,
-      // Add other reservation details as needed
-    };
+      phoneNumber: req.body.phoneNumber,
+      reservationDate: req.body.reservationDate,
+      reservationType: req.body.reservationType,
+      reservationTime: req.body.reservationTime,
+      pickupLocation: {
+          type: req.body.pickupLocationType,
+          address: req.body['rpu-streetAddress'],
+          city: req.body['rpu-city'],
+          state: req.body['rpu-state'],
+          zip: req.body['rpu-zip'],
+          beachAccess: req.body['rbsu-beachAccess'],
+      },
+      // ...other fields
+  };
+  
+    
+   //   beachAccess: req.body.beachAccess,
+    //  vehicleMake: req.body.vehicleMake,
+     // vehicleModel: req.body.vehicleModel,
+     // vehicleColor: req.body.vehicleColor,
+     // licensePlate: req.body.licensePlate,
+      
+      // Add other properties as needed
+   // };
+    
+
+    // Save reservationData to the database
+    await db.collection('pending_reservations').insertOne(reservationData);
 
     await client.close();
 
     // Redirect to a success page or perform other actions
-    res.render('reservation-success', { reservationData, time: ampmTime });
+    res.render('reservation-success', { reservationData });
   } catch (error) {
     console.error('Error saving reservation data:', error);
     res.status(500).send('An error occurred while saving the reservation data.');
   }
 });
+
 
 // Function to submit user/employee to database
 app.post('/submit-user', async (req, res) => {
@@ -317,7 +346,7 @@ function generateTimeIntervals(startTime, endTime, intervalMinutes) {
       const ampm = hour >= 12 ? 'PM' : 'AM';
       const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
       // Ensure minutes are within the range of 0 to 59
-      m = Math.min(Math.max(0, m), 59);
+      minute = Math.min(Math.max(0, m), 59);
       const formattedMinute = minute.toString().padStart(2, '0');
       const timeString = `${formattedHour}:${formattedMinute} ${ampm}`;
       timeIntervals.push({ value: time, label: timeString });

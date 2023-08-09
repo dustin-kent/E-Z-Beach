@@ -14,60 +14,156 @@
         <h1>E-Z Beach</h1>
         <p>Hello <%= user.firstName %></p>
         <button class="home-button" onclick="redirectToDashboard()">Home</button>
-        <button type="submit">Submit Reservation</button>
     </div>
-
-    <div class="container">
-        <div class="reservation-form">
-            <form action="/submit-reservation" method="POST">
+    
+    <form action="/submit-reservation" method="POST">
+        <div class="container">
+            <div class="reservation-form">
                 <!-- Reservation Details -->
                 <div class="reservation-details">
                     <h2>Reservation Details</h2>
                     <input type="text" name="fullName" placeholder="Full Name" required>
+                    <input type="text" name="phoneNumber" placeholder="Phone Number" required>
                     <input type="date" name="reservationDate" required>
-                    <label for="setupTakedown">Setup/Takedown</label>
-                    <select name="setupTakedown" id="setupTakedown">
-                        <option value="setup">Setup</option>
-                        <option value="takedown">Takedown</option>
+                    <label for="reservationType">Setup/Takedown</label>
+                    <select name="reservationType" id="reservationType">
+                        <option value="pickup/setup">Pickup/Setup</option>
+                        <option value="takedown/drop-off">Takedown/Drop-Off</option>
                     </select>
-                    <!-- Add the updated time input with AM/PM format -->
                     <label for="reservationTime">Time:</label>
                     <select id="reservationTime" name="reservationTime"></select>
                 </div>
-            </form>
-        </div>
-        <div class="beach-gear">
-            <!-- Beach Gear Section -->
-            <h2>Beach Gear</h2>
-            <div class="beach-gear-items">
-                <h3>Choose Your Beach Gear:</h3>
-                <select id="beachGearItem" onchange="updateQuantityOptions()">
-                    <option value="">Select an item</option>
-                    <!-- Add all beach gear items dynamically here using JavaScript -->
-                </select>
-                <select id="quantitySelect" disabled>
-                    <option value="">Select quantity</option>
-                    <!-- The quantity options will be populated dynamically using JavaScript -->
-                </select>
-                <button onclick="addToCart()">Add to Cart</button>
-            </div>
-        </div>
-        <div class="cart-wrapper">
-            <div class="cart-header">
-            <div class="cart">
-                <!-- Cart Section -->
-                <h2>Cart</h2>
+                
+                <label for="pickupLocation">Pickup Location:</label>
+                <div>
+                    <input type="radio" id="residence" name="pickupLocationType" value="residence" required>
+                    <label for="residence">Residence</label>
                 </div>
-            </div>    
-                <ul id="cartItems">
+                <div>
+                    <input type="radio" id="vehicle" name="pickupLocationType" value="vehicle" required>
+                    <label for="vehicle">Vehicle</label>
+                </div>
+                <div>
+                    <input type="radio" id="beach" name="pickupLocationType" value="beach" required>
+                    <label for="beach">Beach</label>
+                </div>
+                
+                <div id="residenceFields" style="display: none;">
+                    <label for="rpu-streetAddress">Street Address:</label>
+                    <input type="text" id="rpu-streetAddress" name="rpu-streetAddress" placeholder="Enter street address">
+                    <label for="rpu-city">City:</label>
+                    <input type="text" id="rpu-city" name="rpu-city" placeholder="Enter city">
+                    <label for="rpu-state">State:</label>
+                    <input type="text" id="rpu-state" name="rpu-state" placeholder="Enter state">
+                    <label for="rpu-zip">ZIP Code:</label>
+                    <input type="text" id="rpu-zip" name="rpu-zip" placeholder="Enter ZIP code">
+                    <label for="rbsu-beachAccess">Nearest Beach Access (Where Items Will Be Setup):</label>
+                    <input type="text" name="rbsu-beachAccess" placeholder="Beach Access Point">
+                </div>
+                
+                <div id="vehicleFields" style="display: none;">
+                    <label for="vehicleMake">Vehicle Make:</label>
+                    <input type="text" id="vehicleMake" name="vehicleMake" placeholder="Enter vehicle make">
+                    <label for="vehicleModel">Vehicle Model:</label>
+                    <input type="text" id="vehicleModel" name="vehicleModel" placeholder="Enter vehicle model">
+                    <label for="vehicleColor">Vehicle Color:</label>
+                    <input type="text" id="vehicleColor" name="vehicleColor" placeholder="Enter vehicle color">
+                    <label for="licensePlate">License Plate:</label>
+                    <input type="text" id="licensePlate" name="licensePlate" placeholder="Enter license plate">
+                    <label for="streetAddress">Street Address:</label>
+                    <input type="text" id="streetAddress" name="streetAddress" placeholder="Street/Parking Lot Where You Are Parked">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" placeholder="Enter city">
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" placeholder="Enter state">
+                    <label for="zip">ZIP Code:</label>
+                    <input type="text" id="zip" name="zip" placeholder="Enter ZIP code">
+                    <label for="beachAccess">Nearest Beach Access (Where Items Will Be Setup):</label>
+                    <input type="text" name="beachAccess" placeholder="Beach Access Point Name/Number">
+                </div>
+                
+                <div id="beachFields" style="display: none;">
+                    <label for="beachAccesspoint">Nearest Beach Access (Where Items Will Be Picked Up):</label>
+                    <input type="text" id="beachAccesspoint" name="beachAccesspoint" placeholder="Enter Closest Beach Access Point Name/Number">
+                    
+                    <div>
+                        <input type="radio" id="beachDropOffResidence" name="beachDropOffLocation" value="residence">
+                        <label for="beachDropOffResidence">Residence</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="beachDropOffVehicle" name="beachDropOffLocation" value="vehicle">
+                        <label for="beachDropOffVehicle">Vehicle</label>
+                    </div>
+                    
+                    <div id="beachDropOffResidenceFields" style="display: none;">
+                        <label for="streetAddress">Street Address:</label>
+                        <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter street address">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" placeholder="Enter city">
+                        <label for="state">State:</label>
+                        <input type="text" id="state" name="state" placeholder="Enter state">
+                        <label for="zip">ZIP Code:</label>
+                        <input type="text" id="zip" name="zip" placeholder="Enter ZIP code">
+                    </div>
+                    
+                    <div id="beachDropOffVehicleFields" style="display: none;">
+                        <label for="vehicleMake">Vehicle Make:</label>
+                        <input type="text" id="vehicleMake" name="vehicleMake" placeholder="Enter vehicle make">
+                        <label for="vehicleModel">Vehicle Model:</label>
+                        <input type="text" id="vehicleModel" name="vehicleModel" placeholder="Enter vehicle model">
+                        <label for="vehicleColor">Vehicle Color:</label>
+                        <input type="text" id="vehicleColor" name="vehicleColor" placeholder="Enter vehicle color">
+                        <label for="licensePlate">License Plate:</label>
+                        <input type="text" id="licensePlate" name="licensePlate" placeholder="Enter license plate">
+                        <label for="streetAddress">Street Address:</label>
+                        <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter street address">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" placeholder="Enter city">
+                        <label for="state">State:</label>
+                        <input type="text" id="state" name="state" placeholder="Enter state">
+                        <label for="zip">ZIP Code:</label>
+                        <input type="text" id="zip" name="zip" placeholder="Enter ZIP code">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="beach-gear">
+                <!-- Beach Gear Section -->
+                <h2>Beach Gear</h2>
+                <div class="beach-gear-items">
+                    <h3>Choose Your Beach Gear:</h3>
+                    <select id="beachGearItem" onchange="updateQuantityOptions()">
+                        <option value="">Select an item</option>
+                        <!-- Add all beach gear items dynamically here using JavaScript -->
+                    </select>
+                    <select id="quantitySelect" disabled>
+                        <option value="">Select quantity</option>
+                        <!-- The quantity options will be populated dynamically using JavaScript -->
+                    </select>
+                    <button type="button" onclick="addToCart()">Add to Cart</button>
+                </div>
+            </div>
+            
+            <div class="cart-wrapper">
+                <div class="cart-header">
+                    <div class="cart">
+                        <!-- Cart Section -->
+                        <h2>Cart</h2>
+                    </div>
+                </div>
+                
+                <label>Cart Items:</label>
+                <ul id="cartItems" class="cart-items-list">
                     <!-- The cart items will be populated dynamically using JavaScript -->
                 </ul>
-                <!-- Element to display the total price of the cart -->
+                
+                <button type="submit">Submit Reservation</button>
+                
                 <div id="cartTotal">$0.00</div>
             </div>
-        </div>    
-    </div>
-
+        </div>
+    </form>
+    
     <script>
         const timeSelect = document.getElementById("reservationTime");
         const startTime = 600; // 6:00 AM in 24-hour format
@@ -77,7 +173,6 @@
             const hour = Math.floor(i / 100);
             const minute = (i % 100).toString().padStart(2, '0');
 
-            // Skip invalid time slots (e.g., 60, 65, 70, etc.)
             if (minute >= 60) {
                 continue;
             }
@@ -90,6 +185,7 @@
             timeSelect.appendChild(option);
         }
     </script>
+    
     <script src="/scripts/dashboard.js"></script>
     <script src="/scripts/beach_gear.js"></script>
 </body>

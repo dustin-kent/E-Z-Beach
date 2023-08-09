@@ -155,6 +155,57 @@ function editCartItemQuantity(item) {
     const cartTotalElement = document.getElementById('cartTotal');
     cartTotalElement.textContent = `$${total.toFixed(2)}`;
   }
+
+    const residenceFields = document.getElementById('residenceFields');
+    const vehicleFields = document.getElementById('vehicleFields');
+    const residenceRadio = document.getElementById('residence');
+    const vehicleRadio = document.getElementById('vehicle');
+    const beachFields = document.getElementById('beachFields');
+    const beachRadio = document.getElementById('beach');
+
+    residenceRadio.addEventListener('change', () => {
+        residenceFields.style.display = 'block';
+        vehicleFields.style.display = 'none';
+        beachFields.style.display = 'none';
+    });
+
+    vehicleRadio.addEventListener('change', () => {
+        vehicleFields.style.display = 'block';
+        residenceFields.style.display = 'none';
+        beachFields.style.display = 'none';
+    });
+
+    beachRadio.addEventListener('change', () => {
+        beachFields.style.display = 'block';
+        residenceFields.style.display = 'none';
+        vehicleFields.style.display = 'none';
+    });
+
+    // Function to handle visibility of the beach drop-off sections
+function handleBeachDropOffSelection() {
+    const beachDropOffResidenceRadio = document.getElementById('beachDropOffResidence');
+    const beachDropOffVehicleRadio = document.getElementById('beachDropOffVehicle');
+    const beachDropOffResidenceFields = document.getElementById('beachDropOffResidenceFields');
+    const beachDropOffVehicleFields = document.getElementById('beachDropOffVehicleFields');
+
+    beachDropOffResidenceRadio.addEventListener('change', () => {
+        if (beachDropOffResidenceRadio.checked) {
+            beachDropOffResidenceFields.style.display = 'block';
+            beachDropOffVehicleFields.style.display = 'none';
+        }
+    });
+
+    beachDropOffVehicleRadio.addEventListener('change', () => {
+        if (beachDropOffVehicleRadio.checked) {
+            beachDropOffVehicleFields.style.display = 'block';
+            beachDropOffResidenceFields.style.display = 'none';
+        }
+    });
+}
+
+// Call the function to handle beach drop-off selections
+handleBeachDropOffSelection();
+
   
   // Call the function to populate the beach gear dropdown on page load
   populateBeachGearDropdown();
