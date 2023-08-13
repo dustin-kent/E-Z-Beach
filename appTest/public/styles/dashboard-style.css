@@ -59,7 +59,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s, transform 0.2s ease-in-out; /* Add transition for smooth effect */
+    transition: background-color 0.2s, transform 0.2s ease-in-out; /* transition for smooth effect */
     overflow: hidden; /* Prevent the beachball image from overflowing outside the circle */
 }
 

@@ -8,6 +8,7 @@ const session = require('express-session');
 const uuid = require('uuid');
 const app = express();
 const port = 3000;
+const ejs = require('ejs');
 
 // Load the environment variables from the .env file
 dotenv.config();
@@ -27,6 +28,10 @@ const dbName = process.env.DB_NAME;
 
 // Set the "views" folder to specify where to find the templates
 app.set('views', path.join(__dirname, 'views'));
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 
 // Set the view engine to use for rendering the template files (EJS)
 app.set('view engine', 'ejs');
@@ -60,55 +65,74 @@ function formatPhoneNumber(phone) {
   return match ? match[1] + '-' + match[2] + '-' + match[3] : phone;
 }
 //save reservation data into a collection called "pending reservations"
+// ... (other code)
+
 app.post('/submit-reservation', async (req, res) => {
   console.log('Received form data:', req.body); // Log received data
+
+  // Extract the radio button selection
+  const reservationType = req.body.reservationType;
+
+  // Extract other form fields
+  const fullName = req.body.fullName;
+  const phoneNumber = req.body.phoneNumber;
+  const reservationDate = req.body.reservationDate;
+  const reservationTime = req.body.reservationTime;
+  const pickupDropOffLocationType = req.body.pickupDropOffLocationType;
+  const streetAddress = req.body.streetAddress;
+  const city = req.body.city;
+  const state = req.body.state;
+  const zip = req.body.zip;
+  const vehicleMake = req.body.vehicleMake;
+  const vehicleModel = req.body.vehicleModel;
+  const vehicleColor = req.body.vehicleColor;
+  const licensePlate = req.body.licensePlate;
+  const beachAccess = req.body.BeachAccess; // Note the capitalization here
+
   try {
     const client = await mongodb.MongoClient.connect(dbURI);
     const db = client.db(dbName);
 
-  
+    // Get the _id of the logged-in user from the session
+    const loggedInUserId = req.session.user._id;
 
     const reservationData = {
-      fullName: req.body.fullName,
-      phoneNumber: req.body.phoneNumber,
-      reservationDate: req.body.reservationDate,
-      reservationType: req.body.reservationType,
-      reservationTime: req.body.reservationTime,
-      pickupLocation: {
-          type: req.body.pickupLocationType,
-          address: req.body['rpu-streetAddress'],
-          city: req.body['rpu-city'],
-          state: req.body['rpu-state'],
-          zip: req.body['rpu-zip'],
-          beachAccess: req.body['rbsu-beachAccess'],
-      },
-      // ...other fields
-  };
-  
-    
-   //   beachAccess: req.body.beachAccess,
-    //  vehicleMake: req.body.vehicleMake,
-     // vehicleModel: req.body.vehicleModel,
-     // vehicleColor: req.body.vehicleColor,
-     // licensePlate: req.body.licensePlate,
-      
-      // Add other properties as needed
-   // };
-    
+      fullName,
+      phoneNumber,
+      reservationDate,
+      reservationTime,
+      reservationType,
+      pickupDropOffLocationType,
+      streetAddress,
+      city,
+      state,
+      zip,
+      vehicleMake,
+      vehicleModel,
+      vehicleColor,
+      licensePlate,
+      beachAccess,
+      cartItems: req.body.cartItems,
+      userId: loggedInUserId, // Include the user's _id in the reservation data
+      // ... (other fields if needed)
+    };
 
     // Save reservationData to the database
     await db.collection('pending_reservations').insertOne(reservationData);
 
     await client.close();
 
-    // Redirect to a success page or perform other actions
-    res.render('reservation-success', { reservationData });
+    res.send(`
+      <script>
+          alert('Reservation submitted successfully');
+          window.location.href = '/dashboard'; // Replace with the actual URL of your dashboard page
+      </script>
+    `);
   } catch (error) {
     console.error('Error saving reservation data:', error);
     res.status(500).send('An error occurred while saving the reservation data.');
   }
 });
-
 
 // Function to submit user/employee to database
 app.post('/submit-user', async (req, res) => {
@@ -128,11 +152,11 @@ app.post('/submit-user', async (req, res) => {
       role: req.body.role, 
     };
 
-    console.log('userData:', userData); // Add this console.log to see the userData object  REMOVE LATER AFTER TESTING!!!!!!
+    console.log('userData:', userData); // console.log to see the userData object  REMOVE LATER AFTER TESTING!!!!!!
 
     const existingUser = await db.collection('users').findOne({ email: userData.email });
 
-    console.log('existingUser:', existingUser); // Add this console.log to see the existing user, if any   REMOVE LATER AFTER TESTING!!!!!!!
+    console.log('existingUser:', existingUser); // console.log to see the existing user, if any   REMOVE LATER AFTER TESTING!!!!!!!
 
     if (existingUser) {
       client.close();
@@ -253,6 +277,12 @@ app.get('/schedule-reservation-page', (req, res) => {
 app.get('/schedule-reservation-page', (req, res) => {
   res.render('schedule-reservation-page', { user: req.session.user }); 
 });
+
+// Add this route to render the user-pending-reservation-page.ejs
+app.get('/user-pending-reservation-page', (req, res) => {
+  res.render('user-pending-reservation-page', { user: req.session.user });
+});
+
 
 
 // POST route to handle admin login
@@ -394,7 +424,41 @@ app.get('/api/beach-gear/all', async (req, res) => {
   }
 });
 
+
+
+// Route to fetch all pending reservations for the user
+app.get('/api/user-pending-reservations', async (req, res) => {
+  try {
+      const client = await mongodb.MongoClient.connect(dbURI);
+      const db = client.db(dbName);
+
+      const loggedInUserId = req.session.user._id;
+
+      // Retrieve all pending reservations for the user
+      const pendingReservations = await db.collection('pending_reservations')
+          .find({ userId: loggedInUserId })
+          .toArray();
+
+      await client.close();
+
+      res.json(pendingReservations);
+  } catch (error) {
+      console.error('Error fetching pending reservations:', error);
+      res.status(500).json({ error: 'An error occurred while fetching pending reservations.' });
+  }
+});
+
+
+
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+
+
+
+
+
+

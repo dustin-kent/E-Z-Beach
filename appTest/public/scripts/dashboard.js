@@ -40,3 +40,9 @@ function redirectToScheduleReservationPage() {
 function redirectToDashboard() {
   window.location.href = "/dashboard"; 
 }
+
+function redirectToUserPendingReservations() {
+  window.location.href = '/user-pending-reservation-page';
+}
+
+

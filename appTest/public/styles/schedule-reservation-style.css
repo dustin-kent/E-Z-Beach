@@ -1,4 +1,11 @@
-/* Specific styles for the reservation page */
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -10,195 +17,215 @@ body {
 }
 
 .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* Create three equal-width columns */
-    gap: 30px; /* Add spacing between the columns */
-    justify-content: center; /* Center the columns horizontally */
-    align-items: center; /* Center the content vertically */
-    height: 100vh;
-    max-width: 100%;
-    
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 .header {
-    grid-column: 1 / -1; /* Extend the header to span all three columns */
-    background: linear-gradient(to right, rgba(255, 255, 0, 0.7), rgba(255, 165, 0, 0.7), rgba(128, 0, 128, 0.7));
+    background-color: linear-gradient(to right, #007bff, #ffa500, #800080);
     color: white;
     text-align: center;
     padding: 20px;
-    font-size: 48px;
-    font-weight: normal;
-    letter-spacing: 5px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 36px;
 }
 
+/* Reservation form styles */
 .reservation-form {
-    grid-column: 1; /* Set reservation details to the first column */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center; /* Center the content horizontally */
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
 }
 
-.reservation-details {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center; /* Center the content horizontally */
+.input-field {
+    margin-bottom: 20px;
 }
 
-.reservation-details label {
-    text-align: right; /* Align the labels to the right */
+.input-field label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-.reservation-form input[type="text"],
-.reservation-form input[type="date"],
-.reservation-form select {
+.input-field input,
+.input-field select {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
     border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
-.reservation-form button {
-    padding: 12px 30px;
-    font-size: 18px;
+.radio-section {
+    margin-bottom: 20px;
+}
+
+/* ... Other styles ... */
+
+/* Radio section styles */
+.radio-section label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #000; /* Match the color of other labels */
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #000; /* Match the color of other labels */
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.radio-label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #000; /* Match the color of other labels */
+}
+
+.radio-label2 {
+    margin-bottom: 10px;
+    display: block;
+    font-size: 16px;
+    color: #000; /* Match the color of other labels */
+}
+
+#ResidenceFields label[for="streetAddress"],
+#ResidenceFields label[for="city"],
+#ResidenceFields label[for="state"],
+#ResidenceFields label[for="zip"] {
+    font-weight: bold;
+}
+
+/* Target specific labels before input boxes in VehicleFields */
+#VehicleFields label[for="vehicleMake"],
+#VehicleFields label[for="vehicleModel"],
+#VehicleFields label[for="vehicleColor"],
+#VehicleFields label[for="licensePlate"] {
+    font-weight: bold;
+}
+#BeachAccessFields {
+    margin-top: 20px; /* Adjust the value as needed */
+}
+
+#BeachAccessFields label[for="beachAccess"] {
+    font-weight: bold;
+}
+
+#beachAccess {
+    width: 300px; /* Adjust the width  */
+}
+
+#streetAddress {
+    width: 300px; /* Adjust the width  */
+}
+
+
+/* Beach gear section */
+.beach-gear {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.beach-gear h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.beach-gear select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.beach-gear button {
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.reservation-form button:hover {
+.beach-gear button:hover {
     background-color: #0056b3;
 }
 
-.beach-gear {
-    grid-column: 2; /* Set beach gear to the second column */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center; /* Center the content horizontally */
-}
-
-
+/* Cart section */
 .cart-wrapper {
-    grid-column: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border: 1px solid #000000;
+    background-color: white;
     border-radius: 5px;
-    margin-top: 20px;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: peachpuff;
-    background-size: cover;
-    background-position: center;
-    overflow-y: auto; /* Add this property for scrolling */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.cart {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    padding: 20px;
-    border-radius: 5px;
-    max-width: 100%;
-   
-}
-
-.cart h2 {
+.cart-header h2 {
     font-size: 24px;
+    color: #007bff;
     margin-bottom: 10px;
 }
 
-.cart-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #ccc;
+.cart-items-list {
+    list-style: none;
+    padding: 0;
 }
 
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
 
 .cart-item-name {
-    text-align: left;
-    font-size: 14px;
-    grid-column: 1 / span 2; /* Adjust the span value as needed */
-    padding-left: 10px; /* Add left padding for the item name */
-    width: 180px; /* Set a fixed width for the item name cell */
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    font-size: 16px;
 }
 
 .cart-item-quantity,
 .cart-item-price {
-    font-size: 14px;
-
-    margin-left: 20px;
-}
-
-.cart-item-edit,
-.cart-item-delete {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    display: block; 
-    margin-left: 0; 
-    margin-top: 5px; 
-}
-
-
-.cart-item-edit:hover,
-.cart-item-delete:hover {
-    background-color: #0056b3;
-}
-
-.receipt {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid #ccc;
-    display: flex;
-    justify-content: flex-end;
+    font-size: 16px;
 }
 
 .cart-total {
     font-weight: bold;
-    font-size: 18px;
-    margin-right: 20px;
+    font-size: 20px;
+    margin-top: 20px;
+    text-align: right;
 }
-
-.cart-header {
-    background-color: #000000; 
-    padding: 10px;
-    text-align: center;
-    width: 100%;
-  }
-  
-  .cart-header h2 {
-    margin: 0;
-    color: #27b8e8; 
-  }
-  
 
 /* Adjust font size for smaller screens */
 @media screen and (max-width: 600px) {
-    body {
-        font-size: 14px;
+    .header {
+        font-size: 24px;
     }
 
     .container {
-        max-width: 90%;
+        padding: 10px;
+    }
+
+    .reservation-form,
+    .beach-gear,
+    .cart-wrapper {
+        padding: 10px;
     }
 }

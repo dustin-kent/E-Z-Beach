@@ -19,114 +19,84 @@
     <form action="/submit-reservation" method="POST">
         <div class="container">
             <div class="reservation-form">
-                <!-- Reservation Details -->
                 <div class="reservation-details">
                     <h2>Reservation Details</h2>
-                    <input type="text" name="fullName" placeholder="Full Name" required>
-                    <input type="text" name="phoneNumber" placeholder="Phone Number" required>
-                    <input type="date" name="reservationDate" required>
-                    <label for="reservationType">Setup/Takedown</label>
-                    <select name="reservationType" id="reservationType">
-                        <option value="pickup/setup">Pickup/Setup</option>
-                        <option value="takedown/drop-off">Takedown/Drop-Off</option>
-                    </select>
-                    <label for="reservationTime">Time:</label>
-                    <select id="reservationTime" name="reservationTime"></select>
-                </div>
-                
-                <label for="pickupLocation">Pickup Location:</label>
-                <div>
-                    <input type="radio" id="residence" name="pickupLocationType" value="residence" required>
-                    <label for="residence">Residence</label>
-                </div>
-                <div>
-                    <input type="radio" id="vehicle" name="pickupLocationType" value="vehicle" required>
-                    <label for="vehicle">Vehicle</label>
-                </div>
-                <div>
-                    <input type="radio" id="beach" name="pickupLocationType" value="beach" required>
-                    <label for="beach">Beach</label>
-                </div>
-                
-                <div id="residenceFields" style="display: none;">
-                    <label for="rpu-streetAddress">Street Address:</label>
-                    <input type="text" id="rpu-streetAddress" name="rpu-streetAddress" placeholder="Enter street address">
-                    <label for="rpu-city">City:</label>
-                    <input type="text" id="rpu-city" name="rpu-city" placeholder="Enter city">
-                    <label for="rpu-state">State:</label>
-                    <input type="text" id="rpu-state" name="rpu-state" placeholder="Enter state">
-                    <label for="rpu-zip">ZIP Code:</label>
-                    <input type="text" id="rpu-zip" name="rpu-zip" placeholder="Enter ZIP code">
-                    <label for="rbsu-beachAccess">Nearest Beach Access (Where Items Will Be Setup):</label>
-                    <input type="text" name="rbsu-beachAccess" placeholder="Beach Access Point">
-                </div>
-                
-                <div id="vehicleFields" style="display: none;">
-                    <label for="vehicleMake">Vehicle Make:</label>
-                    <input type="text" id="vehicleMake" name="vehicleMake" placeholder="Enter vehicle make">
-                    <label for="vehicleModel">Vehicle Model:</label>
-                    <input type="text" id="vehicleModel" name="vehicleModel" placeholder="Enter vehicle model">
-                    <label for="vehicleColor">Vehicle Color:</label>
-                    <input type="text" id="vehicleColor" name="vehicleColor" placeholder="Enter vehicle color">
-                    <label for="licensePlate">License Plate:</label>
-                    <input type="text" id="licensePlate" name="licensePlate" placeholder="Enter license plate">
-                    <label for="streetAddress">Street Address:</label>
-                    <input type="text" id="streetAddress" name="streetAddress" placeholder="Street/Parking Lot Where You Are Parked">
-                    <label for="city">City:</label>
-                    <input type="text" id="city" name="city" placeholder="Enter city">
-                    <label for="state">State:</label>
-                    <input type="text" id="state" name="state" placeholder="Enter state">
-                    <label for="zip">ZIP Code:</label>
-                    <input type="text" id="zip" name="zip" placeholder="Enter ZIP code">
-                    <label for="beachAccess">Nearest Beach Access (Where Items Will Be Setup):</label>
-                    <input type="text" name="beachAccess" placeholder="Beach Access Point Name/Number">
-                </div>
-                
-                <div id="beachFields" style="display: none;">
-                    <label for="beachAccesspoint">Nearest Beach Access (Where Items Will Be Picked Up):</label>
-                    <input type="text" id="beachAccesspoint" name="beachAccesspoint" placeholder="Enter Closest Beach Access Point Name/Number">
-                    
-                    <div>
-                        <input type="radio" id="beachDropOffResidence" name="beachDropOffLocation" value="residence">
-                        <label for="beachDropOffResidence">Residence</label>
+                    <div class="input-field">
+                        <label for="fullName">Full Name:</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
                     </div>
-                    <div>
-                        <input type="radio" id="beachDropOffVehicle" name="beachDropOffLocation" value="vehicle">
-                        <label for="beachDropOffVehicle">Vehicle</label>
+                    <div class="input-field">
+                        <label for="phoneNumber">Phone Number:</label>
+                        <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter phone number" required>
                     </div>
-                    
-                    <div id="beachDropOffResidenceFields" style="display: none;">
-                        <label for="streetAddress">Street Address:</label>
-                        <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter street address">
-                        <label for="city">City:</label>
-                        <input type="text" id="city" name="city" placeholder="Enter city">
-                        <label for="state">State:</label>
-                        <input type="text" id="state" name="state" placeholder="Enter state">
-                        <label for="zip">ZIP Code:</label>
-                        <input type="text" id="zip" name="zip" placeholder="Enter ZIP code">
+                    <div class="input-field">
+                        <label for="reservationDate">Date:</label>
+                        <input type="date" id="reservationDate" name="reservationDate" required>
                     </div>
-                    
-                    <div id="beachDropOffVehicleFields" style="display: none;">
-                        <label for="vehicleMake">Vehicle Make:</label>
-                        <input type="text" id="vehicleMake" name="vehicleMake" placeholder="Enter vehicle make">
-                        <label for="vehicleModel">Vehicle Model:</label>
-                        <input type="text" id="vehicleModel" name="vehicleModel" placeholder="Enter vehicle model">
-                        <label for="vehicleColor">Vehicle Color:</label>
-                        <input type="text" id="vehicleColor" name="vehicleColor" placeholder="Enter vehicle color">
-                        <label for="licensePlate">License Plate:</label>
-                        <input type="text" id="licensePlate" name="licensePlate" placeholder="Enter license plate">
-                        <label for="streetAddress">Street Address:</label>
-                        <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter street address">
-                        <label for="city">City:</label>
-                        <input type="text" id="city" name="city" placeholder="Enter city">
-                        <label for="state">State:</label>
-                        <input type="text" id="state" name="state" placeholder="Enter state">
-                        <label for="zip">ZIP Code:</label>
-                        <input type="text" id="zip" name="zip" placeholder="Enter ZIP code">
+                    <div class="input-field">
+                        <label for="reservationTime">Time:</label>
+                        <select id="reservationTime" name="reservationTime"></select>
+                    </div>
+                    <div class="reservationType">
+                        <label class="radio-label">Please select if you are scheduling for pickup/setup or takedown/drop-off:</label>
+                        <div class="radio-option">
+                            <input type="radio" id="pickupSetup" name="reservationType" value="pickup/setup" required>
+                            <label for="pickupSetup">Pickup/Setup</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="takedownDropOff" name="reservationType" value="takedown/drop-off" required>
+                            <label for="takedownDropOff">Takedown/Drop-Off</label>
+                        </div>
+                    </div>
+                    <div id="locationType">
+                        <label class="radio-label">Please Select the Location Type for Pickup/Drop-Off.<br></label>
+                        <label class="radio-label2">(Note: If scheduling a Pickup/Setup please select if items are being picked from a beachside "Residence/Unit" or your "Vehicle". If you are scheduling a Takedown & Drop-off please select "Beach")<br></label>                 
+                            <div class="radio-option">
+                            <input type="radio" id="pickupDropOffResidence" name="pickupDropOffLocationType" value="residence" required>
+                            <label for="pickupDropOffResidence">Residence/Unit</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="pickupDropOffVehicle" name="pickupDropOffLocationType" value="vehicle" required>
+                            <label for="pickupDropOffVehicle">Vehicle</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="pickupDropOffBeach" name="pickupDropOffLocationType" value="beach" required>
+                            <label for="pickupDropOffBeach">Beach</label>
+                        </div>
+                       
+                        <div id="ResidenceFields">
+                            <label class="radio-label">Please enter the address of your beachside residence/unit or the location of your vehicle.<br></label>
+                            <label class="radio-label2">(Note: If items are being picked up or dropped off at your vehicle and you are street parked or parked in parking lot, please provide street name or parking lot name/color/number)<br></label> 
+                            <label for="streetAddress">Street Address:</label>
+                            <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter Street Address/Parking Lot Name/Number" required>
+                            <label for="city">City:</label>
+                            <input type="text" id="city" name="city" placeholder="Enter city" required>
+                            <label for="state">State:</label>
+                            <input type="text" id="state" name="state" placeholder="Enter state" required maxlength="2">
+                            <label for="zip">ZIP Code:</label>
+                            <input type="text" id="zip" name="zip" placeholder="Enter ZIP code" required pattern="\d{5}">
+
+                        </div>
+                        
+                        <div id="VehicleFields">
+                            <label for="vehicleMake">Vehicle Make:</label>
+                            <input type="text" id="vehicleMake" name="vehicleMake" placeholder="Enter vehicle make">
+                            <label for="vehicleModel">Vehicle Model:</label>
+                            <input type="text" id="vehicleModel" name="vehicleModel" placeholder="Enter vehicle model">
+                            <label for="vehicleColor">Vehicle Color:</label>
+                            <input type="text" id="vehicleColor" name="vehicleColor" placeholder="Enter vehicle color">
+                            <label for="licensePlate">License Plate:</label>
+                            <input type="text" id="licensePlate" name="licensePlate" placeholder="Enter license plate">
+                        </div>
+
+                        <div id="BeachAccessFields">
+                            <label for="beachAccess">Closest Beach Access Point:</label>
+                            <label class="radio-label2">(Note: If scheduling a Pickup/Setup reservation, this access point is where your items will be setup for you. If scheduling a Takedown/Drop-Off reservation, providing this access point will allow us to know where you are located on the beach)<br></label>
+                            <input type="text" id="beachAccess" name="BeachAccess" placeholder="Beach Access Point (Name/Number/Color)" required>
+                        </div>    
                     </div>
                 </div>
             </div>
-            
             <div class="beach-gear">
                 <!-- Beach Gear Section -->
                 <h2>Beach Gear</h2>
@@ -156,11 +126,18 @@
                 <ul id="cartItems" class="cart-items-list">
                     <!-- The cart items will be populated dynamically using JavaScript -->
                 </ul>
+
+                <div class="receipt">
+                    <div class="cart-total">Total: <span id="cartTotal">$0.00</span></div>
+                </div>
                 
-                <button type="submit">Submit Reservation</button>
+                <input type="hidden" id="cartItemsInput" name="cartItems" value="">
                 
-                <div id="cartTotal">$0.00</div>
+                
+                
             </div>
+            <button type="submit">Submit Reservation</button>
+            
         </div>
     </form>
     
@@ -185,6 +162,19 @@
             timeSelect.appendChild(option);
         }
     </script>
+    <script>
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        
+        phoneNumberInput.addEventListener('input', function () {
+            const value = this.value.replace(/\D/g, '');
+            if (value.length >= 3 && value.length <= 6) {
+                this.value = `${value.slice(0, 3)}-${value.slice(3)}`;
+            } else if (value.length > 6) {
+                this.value = `${value.slice(0, 3)}-${value.slice(3, 6)}-${value.slice(6, 10)}`;
+            }
+        });
+        </script>
+        
     
     <script src="/scripts/dashboard.js"></script>
     <script src="/scripts/beach_gear.js"></script>

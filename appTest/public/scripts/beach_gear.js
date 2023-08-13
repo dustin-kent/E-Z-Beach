@@ -25,7 +25,7 @@ const beachGearItems = [
   
   // Function to populate the beach gear dropdown
   function populateBeachGearDropdown() {
-    console.log('Populating beach gear dropdown...'); //  line for debugging   REMOVE AFTER TESTING!!!!!!!!!!!!!!!!!!!!
+    console.log('Populating beach gear dropdown...'); // Debugging message
   
     const beachGearDropdown = document.getElementById('beachGearItem');
   
@@ -33,7 +33,14 @@ const beachGearItems = [
       const option = new Option(item.item_name, item.item_name);
       beachGearDropdown.appendChild(option);
     });
+    
   }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Call the function after the DOM has loaded
+    populateBeachGearDropdown();
+  });
+  
   
   // Function to update the quantity options based on the selected item
   function updateQuantityOptions() {
@@ -55,40 +62,48 @@ const beachGearItems = [
   }
   
   // Function to add the selected item to the cart
-  function addToCart() {
+function addToCart() {
     const beachGearDropdown = document.getElementById('beachGearItem');
     const quantitySelect = document.getElementById('quantitySelect');
     const cartItemsList = document.getElementById('cartItems');
-  
+
     const selectedItem = beachGearItems.find(item => item.item_name === beachGearDropdown.value);
     const quantity = quantitySelect.value;
-  
+
     if (selectedItem && quantity) {
-      // Check if the item is already in the cart
-      const existingCartItem = document.querySelector(`[data-item-name="${selectedItem.item_name}"]`);
-      if (existingCartItem) {
-        // If the item is already in the cart, update its quantity
-        const existingQuantity = parseInt(existingCartItem.querySelector('.cart-item-quantity').textContent);
-        const newQuantity = existingQuantity + parseInt(quantity);
-        existingCartItem.querySelector('.cart-item-quantity').textContent = newQuantity;
-      } else {
-        // If the item is not in the cart, create a new list item for the cart
-        const cartItem = document.createElement('li');
-        cartItem.dataset.itemName = selectedItem.item_name;
-        cartItem.innerHTML = `
-          <span class="cart-item-name">${selectedItem.item_name}</span>
-          <span class="cart-item-quantity">${quantity}</span>
-          <span class="cart-item-price">$${selectedItem.item_price * quantity}</span>
-          <button class="cart-item-edit" onclick="editCartItemQuantity(this)">Edit</button>
-          <button class="cart-item-delete" onclick="deleteCartItem(this)">Delete</button>
-        `;
-        cartItemsList.appendChild(cartItem);
-      }
-  
-      // Call the function to update the total price
-      updateCartTotal();
+        const existingCartItem = document.querySelector(`[data-item-name="${selectedItem.item_name}"]`);
+        if (existingCartItem) {
+            const existingQuantity = parseInt(existingCartItem.querySelector('.cart-item-quantity').textContent);
+            const newQuantity = existingQuantity + parseInt(quantity);
+            existingCartItem.querySelector('.cart-item-quantity').textContent = newQuantity;
+        } else {
+            const cartItem = document.createElement('li');
+            cartItem.dataset.itemName = selectedItem.item_name;
+            cartItem.innerHTML = `
+                <span class="cart-item-name">${selectedItem.item_name}</span>
+                <span class="cart-item-quantity">${quantity}</span>
+                <span class="cart-item-price">$${selectedItem.item_price * quantity}</span>
+                <button class="cart-item-edit" onclick="editCartItemQuantity(this)">Edit</button>
+                <button class="cart-item-delete" onclick="deleteCartItem(this)">Delete</button>
+            `;
+            cartItemsList.appendChild(cartItem);
+        }
+
+        // Update the hidden input field with cart items data
+        const cartItemsInput = document.getElementById('cartItemsInput');
+        const cartItemsData = Array.from(cartItemsList.children).map(cartItem => {
+            const itemName = cartItem.dataset.itemName;
+            const itemQuantity = parseInt(cartItem.querySelector('.cart-item-quantity').textContent);
+            return { item_name: itemName, quantity: itemQuantity };
+        });
+        cartItemsInput.value = JSON.stringify(cartItemsData);
+
+        
+
+        // Call the function to update the total price
+        updateCartTotal();
     }
-  }
+}
   
   // Function to remove an item from the cart
 function deleteCartItem(item) {
@@ -156,60 +171,73 @@ function editCartItemQuantity(item) {
     cartTotalElement.textContent = `$${total.toFixed(2)}`;
   }
 
-    const residenceFields = document.getElementById('residenceFields');
-    const vehicleFields = document.getElementById('vehicleFields');
-    const residenceRadio = document.getElementById('residence');
-    const vehicleRadio = document.getElementById('vehicle');
-    const beachFields = document.getElementById('beachFields');
-    const beachRadio = document.getElementById('beach');
+ // Section for scheduling locations
+const pickupSetupRadio = document.getElementById('pickupSetup');
+const takedownDropOffRadio = document.getElementById('takedownDropOff');
+const pickupLocationFields = document.getElementById('pickupLocationFields');
+const dropOffLocationFields = document.getElementById('dropOffLocationFields');
+const pickupResidenceFields = document.getElementById('pickupResidenceFields');
+const pickupVehicleFields = document.getElementById('pickupVehicleFields');
+const dropOffResidenceFields = document.getElementById('dropOffResidenceFields');
+const dropOffVehicleFields = document.getElementById('dropOffVehicleFields');
 
-    residenceRadio.addEventListener('change', () => {
-        residenceFields.style.display = 'block';
-        vehicleFields.style.display = 'none';
-        beachFields.style.display = 'none';
-    });
+pickupSetupRadio.addEventListener('change', () => {
+    if (pickupSetupRadio.checked) {
+        pickupLocationFields.style.display = 'block';
+        dropOffLocationFields.style.display = 'none';
+        pickupResidenceFields.style.display = 'none';
+        pickupVehicleFields.style.display = 'none';
+        dropOffResidenceFields.style.display = 'none';
+        dropOffVehicleFields.style.display = 'none';
+    }
+});
 
-    vehicleRadio.addEventListener('change', () => {
-        vehicleFields.style.display = 'block';
-        residenceFields.style.display = 'none';
-        beachFields.style.display = 'none';
-    });
+takedownDropOffRadio.addEventListener('change', () => {
+    if (takedownDropOffRadio.checked) {
+        pickupLocationFields.style.display = 'none';
+        dropOffLocationFields.style.display = 'block';
+        pickupResidenceFields.style.display = 'none';
+        pickupVehicleFields.style.display = 'none';
+        dropOffResidenceFields.style.display = 'none';
+        dropOffVehicleFields.style.display = 'none';
+    }
+});
 
-    beachRadio.addEventListener('change', () => {
-        beachFields.style.display = 'block';
-        residenceFields.style.display = 'none';
-        vehicleFields.style.display = 'none';
-    });
+const pickupResidenceRadio = document.getElementById('pickupResidence');
+const pickupVehicleRadio = document.getElementById('pickupVehicle');
+const dropOffResidenceRadio = document.getElementById('dropOffResidenceRadio');
+const dropOffVehicleRadio = document.getElementById('dropOffVehicleRadio');
+const dropOffResidenceInputFields = document.getElementById('dropOffResidenceFields'); 
+const dropOffVehicleInputFields = document.getElementById('dropOffVehicleFields'); 
 
-    // Function to handle visibility of the beach drop-off sections
-function handleBeachDropOffSelection() {
-    const beachDropOffResidenceRadio = document.getElementById('beachDropOffResidence');
-    const beachDropOffVehicleRadio = document.getElementById('beachDropOffVehicle');
-    const beachDropOffResidenceFields = document.getElementById('beachDropOffResidenceFields');
-    const beachDropOffVehicleFields = document.getElementById('beachDropOffVehicleFields');
+pickupResidenceRadio.addEventListener('change', () => {
+    if (pickupResidenceRadio.checked) {
+        pickupResidenceFields.style.display = 'block';
+        pickupVehicleFields.style.display = 'none';
+    } else {
+        pickupResidenceFields.style.display = 'none';
+    }
+});
 
-    beachDropOffResidenceRadio.addEventListener('change', () => {
-        if (beachDropOffResidenceRadio.checked) {
-            beachDropOffResidenceFields.style.display = 'block';
-            beachDropOffVehicleFields.style.display = 'none';
-        }
-    });
+pickupVehicleRadio.addEventListener('change', () => {
+    if (pickupVehicleRadio.checked) {
+        pickupVehicleFields.style.display = 'block';
+        pickupResidenceFields.style.display = 'block';
+    } else {
+        pickupVehicleFields.style.display = 'none';
+    }
+});
 
-    beachDropOffVehicleRadio.addEventListener('change', () => {
-        if (beachDropOffVehicleRadio.checked) {
-            beachDropOffVehicleFields.style.display = 'block';
-            beachDropOffResidenceFields.style.display = 'none';
-        }
-    });
-}
+dropOffResidenceRadio.addEventListener('change', () => {
+    dropOffResidenceInputFields.style.display = dropOffResidenceRadio.checked ? 'block' : 'none';
+    dropOffVehicleInputFields.style.display = 'none';
+});
 
-// Call the function to handle beach drop-off selections
-handleBeachDropOffSelection();
+dropOffVehicleRadio.addEventListener('change', () => {
+    dropOffVehicleInputFields.style.display = dropOffVehicleRadio.checked ? 'block' : 'none';
+    dropOffResidenceInputFields.style.display = dropOffVehicleRadio.checked ? 'block' : 'none';
+});
 
-  
-  // Call the function to populate the beach gear dropdown on page load
-  populateBeachGearDropdown();
-  
-  // Call the function to update the total price of the cart on page load
-  updateCartTotal();
-  
+// Call the function to update the total price of the cart on page load
+updateCartTotal();
+

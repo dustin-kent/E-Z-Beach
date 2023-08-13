@@ -39,7 +39,7 @@ input[type="password"] {
 .login-btn,
 .create-account-btn {
     padding: 12px 30px;
-    font-size: 18px; /* Increase font size */
+    font-size: 18px; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
