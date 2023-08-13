@@ -1,10 +1,4 @@
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-}
 
 .reservation {
     border: 1px solid #ccc;
@@ -18,6 +12,44 @@
     margin: 5px 0;
 }
 
-h2 {
-    text-align: center;
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #014a98;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+
+.container h2 {
+    background: linear-gradient(to right, #007bff, #ffa500, #800080);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 50px;
+    margin-bottom: 20px;
+    height: 200px;
+    padding-top: 80px;
+    
+}
+
+/* Apply linear gradient background to h2 */
+
+
+/* Rest of your styles... */

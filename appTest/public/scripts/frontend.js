@@ -72,11 +72,54 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Add more details here
 
+                // Create the delete button for each reservation
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'delete-button'; // Set the class name for the delete button
+                deleteButton.addEventListener('click', async () => {
+                    const reservationId = pendingReservation._id; 
+                    try {
+                        const deleteResponse = await fetch(`/api/delete-reservation/${reservationId}`, {
+                            method: 'DELETE',
+                        });
+                        const deleteData = await deleteResponse.json();
+                        console.log(deleteData.message);
+
+                        // Remove the deleted reservation from the DOM
+                        reservationDiv.remove();
+                    } catch (deleteError) {
+                        console.error('Error deleting reservation:', deleteError);
+                    }
+                });
+                reservationDiv.appendChild(deleteButton);
+
                 reservationDetailsContainer.appendChild(reservationDiv);
             }
         } else {
             reservationDetailsContainer.innerHTML = '<p>No pending reservations found.</p>';
         }
+
+        // Home button event listener
+        const homeButton = document.getElementById('homeButton');
+        homeButton.addEventListener('click', () => {
+            window.location.href = '/dashboard'; // Replace with the actual URL of the home page
+        });
+
+        // Logout button event listener
+        const logoutButton = document.getElementById('logoutButton');
+        logoutButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST',
+                });
+                const data = await response.text();
+                console.log(data); // Display the logout message in the console
+                window.location.href = '/login-page.html'; // Redirect to the login page
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        });
+
     } catch (error) {
         console.error('Error fetching pending reservations:', error);
     }

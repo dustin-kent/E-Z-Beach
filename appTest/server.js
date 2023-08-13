@@ -449,6 +449,30 @@ app.get('/api/user-pending-reservations', async (req, res) => {
 });
 
 
+app.delete('/api/delete-reservation/:reservationId', async (req, res) => {
+  try {
+    const client = await mongodb.MongoClient.connect(dbURI);
+    const db = client.db(dbName);
+
+    const reservationId = req.params.reservationId;
+
+    // Perform deletion logic here using the db.collection() methods
+    await db.collection('pending_reservations').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
+
+
+    client.close();
+
+    res.json({ message: 'Reservation deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting reservation:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the reservation' });
+  }
+});
+
+
+
+
+
 
 
 // Start the server
