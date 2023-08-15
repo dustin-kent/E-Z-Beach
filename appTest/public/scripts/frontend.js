@@ -70,7 +70,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 beachAccess.innerHTML = `<strong>Beach Access Point:</strong> ${pendingReservation.beachAccess}`;
                 reservationDiv.appendChild(beachAccess);
 
-                // Add more details here
+                // Create a container for displaying cart items
+                const cartItemsContainer = document.createElement('div');
+                cartItemsContainer.className = 'cart-items';
+
+                // Loop through cartItems array and create elements for each item
+                // ... (other code)
+
+                // Create the edit button for each reservation
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.className = 'edit-button'; // Set a class for styling and event handling
+                editButton.addEventListener('click', () => {
+                    // Redirect to the edit page for this reservation
+                    window.location.href = `/edit-reservation/${pendingReservation._id}`;
+                });
+                reservationDiv.appendChild(editButton);
 
                 // Create the delete button for each reservation
                 const deleteButton = document.createElement('button');
