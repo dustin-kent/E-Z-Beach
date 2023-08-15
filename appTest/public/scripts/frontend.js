@@ -77,15 +77,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Loop through cartItems array and create elements for each item
                 // ... (other code)
 
-                // Create the edit button for each reservation
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.className = 'edit-button'; // Set a class for styling and event handling
-                editButton.addEventListener('click', () => {
-                    // Redirect to the edit page for this reservation
-                    window.location.href = `/edit-reservation/${pendingReservation._id}`;
-                });
-                reservationDiv.appendChild(editButton);
+            if (pendingReservation.cartItems && pendingReservation.cartItems.length > 0) {
+                const cartItemsHeader = document.createElement('p');
+                cartItemsHeader.innerHTML = '<strong>Cart Items:</strong>';
+                reservationDiv.appendChild(cartItemsHeader);
+
+                const cartItemsList = document.createElement('ul');
+                for (const cartItem of JSON.parse(pendingReservation.cartItems)) {
+                    const cartItemElement = document.createElement('li');
+                    const itemName = cartItem.item_name;
+                    const itemQuantity = cartItem.quantity;
+                    cartItemElement.textContent = `${itemName} (Quantity: ${itemQuantity})`;
+                    cartItemsList.appendChild(cartItemElement);
+                }
+
+                reservationDiv.appendChild(cartItemsList);
+            }
+
+// ... (other code)
+
+
+                // Add more details here
 
                 // Create the delete button for each reservation
                 const deleteButton = document.createElement('button');
