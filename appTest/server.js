@@ -67,6 +67,7 @@ function formatPhoneNumber(phone) {
 //save reservation data into a collection called "pending reservations"
 // ... (other code)
 
+
 app.post('/submit-reservation', async (req, res) => {
   console.log('Received form data:', req.body); // Log received data
 
@@ -88,6 +89,9 @@ app.post('/submit-reservation', async (req, res) => {
   const vehicleColor = req.body.vehicleColor;
   const licensePlate = req.body.licensePlate;
   const beachAccess = req.body.BeachAccess; // Note the capitalization here
+  const cartItems = JSON.parse(req.body.cartItems); // Parse the JSON string to an array
+  const cartTotal = req.body.cartTotal; // Retrieve the cartTotal value from the cartTotalInput field
+  
 
   try {
     const client = await mongodb.MongoClient.connect(dbURI);
@@ -113,7 +117,9 @@ app.post('/submit-reservation', async (req, res) => {
       licensePlate,
       beachAccess,
       cartItems: req.body.cartItems,
-      userId: loggedInUserId, // Include the user's _id in the reservation data
+      cartTotal: cartTotal,
+      userId: loggedInUserId,
+      timestamp: new Date(), // Include the user's _id in the reservation data
       // ... (other fields if needed)
     };
 

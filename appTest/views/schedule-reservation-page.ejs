@@ -50,8 +50,8 @@
                     </div>
                     <div id="locationType">
                         <label class="radio-label">Please Select the Location Type for Pickup/Drop-Off.<br></label>
-                        <label class="radio-label2">(Note: If scheduling a Pickup/Setup please select if items are being picked from a beachside "Residence/Unit" or your "Vehicle". If you are scheduling a Takedown & Drop-off please select "Beach")<br></label>                 
-                            <div class="radio-option">
+                        <label class="radio-label2">(Note: If scheduling a Pickup/Setup please select if items are being picked from a beachside "Residence/Unit" or your "Vehicle". If you are scheduling a Takedown & Drop-off please select "Beach")<br></label>
+                        <div class="radio-option">
                             <input type="radio" id="pickupDropOffResidence" name="pickupDropOffLocationType" value="residence" required>
                             <label for="pickupDropOffResidence">Residence/Unit</label>
                         </div>
@@ -63,10 +63,9 @@
                             <input type="radio" id="pickupDropOffBeach" name="pickupDropOffLocationType" value="beach" required>
                             <label for="pickupDropOffBeach">Beach</label>
                         </div>
-                       
                         <div id="ResidenceFields">
                             <label class="radio-label">Please enter the address of your beachside residence/unit or the location of your vehicle.<br></label>
-                            <label class="radio-label2">(Note: If items are being picked up or dropped off at your vehicle and you are street parked or parked in parking lot, please provide street name or parking lot name/color/number)<br></label> 
+                            <label class="radio-label2">(Note: If items are being picked up or dropped off at your vehicle and you are street parked or parked in a parking lot, please provide street name or parking lot name/color/number)<br></label>
                             <label for="streetAddress">Street Address:</label>
                             <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter Street Address/Parking Lot Name/Number" required>
                             <label for="city">City:</label>
@@ -75,9 +74,7 @@
                             <input type="text" id="state" name="state" placeholder="Enter state" required maxlength="2">
                             <label for="zip">ZIP Code:</label>
                             <input type="text" id="zip" name="zip" placeholder="Enter ZIP code" required pattern="\d{5}">
-
                         </div>
-                        
                         <div id="VehicleFields">
                             <label for="vehicleMake">Vehicle Make:</label>
                             <input type="text" id="vehicleMake" name="vehicleMake" placeholder="Enter vehicle make">
@@ -88,12 +85,11 @@
                             <label for="licensePlate">License Plate:</label>
                             <input type="text" id="licensePlate" name="licensePlate" placeholder="Enter license plate">
                         </div>
-
                         <div id="BeachAccessFields">
                             <label for="beachAccess">Closest Beach Access Point:</label>
-                            <label class="radio-label2">(Note: If scheduling a Pickup/Setup reservation, this access point is where your items will be setup for you. If scheduling a Takedown/Drop-Off reservation, providing this access point will allow us to know where you are located on the beach)<br></label>
+                            <label class="radio-label2">(Note: If scheduling a Pickup/Setup reservation, this access point is where your items will be set up for you. If scheduling a Takedown/Drop-Off reservation, providing this access point will allow us to know where you are located on the beach)<br></label>
                             <input type="text" id="beachAccess" name="BeachAccess" placeholder="Beach Access Point (Name/Number/Color)" required>
-                        </div>    
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,7 +109,6 @@
                     <button type="button" onclick="addToCart()">Add to Cart</button>
                 </div>
             </div>
-            
             <div class="cart-wrapper">
                 <div class="cart-header">
                     <div class="cart">
@@ -121,25 +116,20 @@
                         <h2>Cart</h2>
                     </div>
                 </div>
-                
                 <label>Cart Items:</label>
                 <ul id="cartItems" class="cart-items-list">
                     <!-- The cart items will be populated dynamically using JavaScript -->
                 </ul>
-
                 <div class="receipt">
                     <div class="cart-total">Total: <span id="cartTotal">$0.00</span></div>
                 </div>
-                
                 <input type="hidden" id="cartItemsInput" name="cartItems" value="">
-                
-                
-                
+                <input type="hidden" id="cartTotalInput" name="cartTotal" value="">
+                <button type="submit">Submit Reservation</button>
             </div>
-            <button type="submit">Submit Reservation</button>
-            
         </div>
     </form>
+    
     
     <script>
         const timeSelect = document.getElementById("reservationTime");
@@ -173,6 +163,11 @@
                 this.value = `${value.slice(0, 3)}-${value.slice(3, 6)}-${value.slice(6, 10)}`;
             }
         });
+        </script>
+
+        <script>
+            const cartTotal = document.getElementById('cartTotal').textContent;
+            document.getElementById('cartTotalInput').value = cartTotal;
         </script>
         
     

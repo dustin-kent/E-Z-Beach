@@ -159,17 +159,22 @@ function editCartItemQuantity(item) {
   function updateCartTotal() {
     const cartItems = document.querySelectorAll('#cartItems li');
     let total = 0;
-  
+
     cartItems.forEach(item => {
-      const itemName = item.dataset.itemName;
-      const itemPrice = beachGearItems.find(item => item.item_name === itemName).item_price;
-      const itemQuantity = parseInt(item.querySelector('.cart-item-quantity').textContent);
-      total += itemPrice * itemQuantity;
+        const itemName = item.dataset.itemName;
+        const itemPrice = beachGearItems.find(item => item.item_name === itemName).item_price;
+        const itemQuantity = parseInt(item.querySelector('.cart-item-quantity').textContent);
+        total += itemPrice * itemQuantity;
     });
-  
+
     const cartTotalElement = document.getElementById('cartTotal');
     cartTotalElement.textContent = `$${total.toFixed(2)}`;
-  }
+
+    // Update the hidden input field
+    const cartTotalInput = document.getElementById('cartTotalInput');
+    cartTotalInput.value = total.toFixed(2); // Store the total as a string
+}
+
 
  // Section for scheduling locations
 const pickupSetupRadio = document.getElementById('pickupSetup');

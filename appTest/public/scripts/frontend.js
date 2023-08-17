@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             for (const pendingReservation of pendingReservations) {
                 const reservationDiv = document.createElement('div');
                 reservationDiv.className = 'reservation';
-
+                
                 const fullName = document.createElement('p');
                 fullName.innerHTML = `<strong>Reservation Name:</strong> ${pendingReservation.fullName}`;
                 reservationDiv.appendChild(fullName);
