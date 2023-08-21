@@ -13,7 +13,6 @@ const ejs = require('ejs');
 // Load the environment variables from the .env file
 dotenv.config();
 
-
 // Middleware to prevent caching of pages
 app.use((req, res, next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -64,10 +63,8 @@ function formatPhoneNumber(phone) {
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
   return match ? match[1] + '-' + match[2] + '-' + match[3] : phone;
 }
+
 //save reservation data into a collection called "pending reservations"
-// ... (other code)
-
-
 app.post('/submit-reservation', async (req, res) => {
   console.log('Received form data:', req.body); // Log received data
 
@@ -88,7 +85,7 @@ app.post('/submit-reservation', async (req, res) => {
   const vehicleModel = req.body.vehicleModel;
   const vehicleColor = req.body.vehicleColor;
   const licensePlate = req.body.licensePlate;
-  const beachAccess = req.body.BeachAccess; // Note the capitalization here
+  const beachAccess = req.body.BeachAccess; // Note Capital name for BeachAccess..... dont make that mistake again!!
   const cartItems = JSON.parse(req.body.cartItems); // Parse the JSON string to an array
   const cartTotal = req.body.cartTotal; // Retrieve the cartTotal value from the cartTotalInput field
   
@@ -118,8 +115,9 @@ app.post('/submit-reservation', async (req, res) => {
       beachAccess,
       cartItems: req.body.cartItems,
       cartTotal: cartTotal,
-      userId: loggedInUserId,
-      timestamp: new Date(), // Include the user's _id in the reservation data
+      userId: loggedInUserId,// Include the user's _id in the reservation data
+      timestamp: new Date(),
+      status: 'pending', 
       // ... (other fields if needed)
     };
 
@@ -220,7 +218,6 @@ app.post('/submit-admin', async (req, res) => {
   }
 });
 
-
 // POST route to handle user login
 app.post('/login', async (req, res) => {
   try {
@@ -284,12 +281,14 @@ app.get('/schedule-reservation-page', (req, res) => {
   res.render('schedule-reservation-page', { user: req.session.user }); 
 });
 
-// Add this route to render the user-pending-reservation-page.ejs
+// Render the user-pending-reservation-page.ejs
 app.get('/user-pending-reservation-page', (req, res) => {
   res.render('user-pending-reservation-page', { user: req.session.user });
 });
 
-
+app.get('/view-history-page', (req, res) => {
+  res.render('view-history-page'); // Render the view history page using EJS
+});
 
 // POST route to handle admin login
 app.post('/admin-login', async (req, res) => {
@@ -393,8 +392,6 @@ function generateTimeIntervals(startTime, endTime, intervalMinutes) {
   return timeIntervals;
 }
 
-
-
 // Add a new item to the beach gear collection
 app.post('/api/beach-gear/add', async (req, res) => {
   try {
@@ -430,8 +427,6 @@ app.get('/api/beach-gear/all', async (req, res) => {
   }
 });
 
-
-
 // Route to fetch all pending reservations for the user
 app.get('/api/user-pending-reservations', async (req, res) => {
   try {
@@ -462,23 +457,52 @@ app.delete('/api/delete-reservation/:reservationId', async (req, res) => {
 
     const reservationId = req.params.reservationId;
 
-    // Perform deletion logic here using the db.collection() methods
-    await db.collection('pending_reservations').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
+    // Find the reservation in the pending_reservations collection
+    const reservation = await db.collection('pending_reservations').findOne({ _id: new mongodb.ObjectId(reservationId) });
 
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found.' });
+    }
+
+    // Move the reservation to the reservation_history collection
+    reservation.status = 'canceled'; // Update the status
+    await db.collection('reservation_history').insertOne(reservation);
+
+    // Delete the reservation from the pending_reservations collection
+    await db.collection('pending_reservations').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
 
     client.close();
 
-    res.json({ message: 'Reservation deleted successfully' });
+    res.json({ message: 'Reservation canceled successfully' });
   } catch (error) {
-    console.error('Error deleting reservation:', error);
-    res.status(500).json({ error: 'An error occurred while deleting the reservation' });
+    console.error('Error canceling reservation:', error);
+    res.status(500).json({ error: 'An error occurred while canceling the reservation' });
   }
 });
 
 
 
+// Route to fetch user's reservation history
+app.get('/api/user-reservation-history', async (req, res) => {
+  try {
+      const client = await mongodb.MongoClient.connect(dbURI);
+      const db = client.db(dbName);
 
+      const loggedInUserId = req.session.user._id;
 
+      // Retrieve reservation history for the user
+      const reservationHistory = await db.collection('reservation_history')
+          .find({ userId: loggedInUserId })
+          .toArray();
+
+      await client.close();
+
+      res.json(reservationHistory);
+  } catch (error) {
+      console.error('Error fetching reservation history:', error);
+      res.status(500).json({ error: 'An error occurred while fetching reservation history.' });
+  }
+});
 
 
 // Start the server

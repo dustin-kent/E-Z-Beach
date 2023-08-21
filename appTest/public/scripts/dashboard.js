@@ -12,7 +12,7 @@ if (role === 'admin') {
   document.getElementById('role').textContent = role;
 }
 
-// JavaScript function to logout
+// function to logout
 function logout() {
   fetch('/logout', {
     method: 'POST',
@@ -32,7 +32,7 @@ function logout() {
   });
 }
 
-// Function to redirect to the "schedule-reservation-page"
+// Functions to redirect to the "different pages"
 function redirectToScheduleReservationPage() {
   window.location.href = '/schedule-reservation-page';
 }
@@ -45,4 +45,6 @@ function redirectToUserPendingReservations() {
   window.location.href = '/user-pending-reservation-page';
 }
 
-
+function redirectToViewHistoryPage() {
+  window.location.href = '/view-history-page'; 
+}

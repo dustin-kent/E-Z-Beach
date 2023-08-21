@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/api/user-pending-reservations');
+        const response = await fetch('/api/user-reservation-history');
         const pendingReservations = await response.json();
 
         const reservationDetailsContainer = document.getElementById('reservationDetails');
@@ -97,32 +97,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 reservationDiv.appendChild(cartItemsList);
             }
 
-
-                // Create the delete button for each reservation
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.className = 'delete-button'; // Set the class name for the delete button
-                deleteButton.addEventListener('click', async () => {
-                    const reservationId = pendingReservation._id; 
-                    try {
-                        const deleteResponse = await fetch(`/api/delete-reservation/${reservationId}`, {
-                            method: 'DELETE',
-                        });
-                        const deleteData = await deleteResponse.json();
-                        console.log(deleteData.message);
-
-                        // Remove the deleted reservation from the DOM
-                        reservationDiv.remove();
-                    } catch (deleteError) {
-                        console.error('Error deleting reservation:', deleteError);
-                    }
-                });
-                reservationDiv.appendChild(deleteButton);
-
                 reservationDetailsContainer.appendChild(reservationDiv);
+
+                const status = document.createElement('p');
+        status.innerHTML = `<strong>Status:</strong> ${pendingReservation.status}`;
+        reservationDiv.appendChild(status);4
             }
         } else {
-            reservationDetailsContainer.innerHTML = '<p>No pending reservations found.</p>';
+            reservationDetailsContainer.innerHTML = '<p>No reservations history.</p>';
         }
 
         // Home button event listener
@@ -139,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     method: 'POST',
                 });
                 const data = await response.text();
-                console.log(data); 
+                console.log(data); // Display the logout message in the console
                 window.location.href = '/login-page.html'; // Redirect to the login page
             } catch (error) {
                 console.error('Error logging out:', error);

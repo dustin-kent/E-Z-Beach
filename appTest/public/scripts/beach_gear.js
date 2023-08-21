@@ -20,7 +20,7 @@ const beachGearItems = [
     { item_name: 'Beach Canopy (4 Post/Leg-Style (Pickup w/Takedown))', item_price: 15 },
     { item_name: 'Beach Canopy (4 Post/Leg-Style (Pickup Only/No-Takedown))', item_price: 8 }
 
-    // Add more items here...
+    // Add more items here if needed...
   ];
   
   // Function to populate the beach gear dropdown
@@ -40,8 +40,7 @@ const beachGearItems = [
     // Call the function after the DOM has loaded
     populateBeachGearDropdown();
   });
-  
-  
+    
   // Function to update the quantity options based on the selected item
   function updateQuantityOptions() {
     const beachGearDropdown = document.getElementById('beachGearItem');
@@ -98,8 +97,6 @@ function addToCart() {
         });
         cartItemsInput.value = JSON.stringify(cartItemsData);
 
-        
-
         // Call the function to update the total price
         updateCartTotal();
     }
@@ -129,7 +126,6 @@ function deleteCartItem(item) {
     updateCartTotal();
   }
   
-  
   // Function to edit the quantity of an item in the cart
 function editCartItemQuantity(item) {
     const quantity = parseInt(prompt('Enter the new quantity:'));
@@ -154,7 +150,6 @@ function editCartItemQuantity(item) {
     }
   }
   
-  
   // Function to update the total price of the cart
   function updateCartTotal() {
     const cartItems = document.querySelectorAll('#cartItems li');
@@ -175,8 +170,7 @@ function editCartItemQuantity(item) {
     cartTotalInput.value = total.toFixed(2); // Store the total as a string
 }
 
-
- // Section for scheduling locations
+ // Section for scheduling locations.  I changed so much on this that it works with it, but doesnt without it.  Leaving alone!!!!!
 const pickupSetupRadio = document.getElementById('pickupSetup');
 const takedownDropOffRadio = document.getElementById('takedownDropOff');
 const pickupLocationFields = document.getElementById('pickupLocationFields');

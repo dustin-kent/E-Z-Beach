@@ -1,11 +1,9 @@
-/* Reset some default styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Global styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -63,8 +61,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* ... Other styles ... */
-
 /* Radio section styles */
 .radio-section label {
     display: block;
@@ -116,7 +112,7 @@ body {
     font-weight: bold;
 }
 #BeachAccessFields {
-    margin-top: 20px; /* Adjust the value as needed */
+    margin-top: 20px; 
 }
 
 #BeachAccessFields label[for="beachAccess"] {
