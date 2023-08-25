@@ -48,3 +48,15 @@ function redirectToUserPendingReservations() {
 function redirectToViewHistoryPage() {
   window.location.href = '/view-history-page'; 
 }
+
+function redirectToAvailableReservations() {
+  window.location.href = '/available-reservations-page';
+}
+
+function redirectToAssignedJobs() {
+  window.location.href = '/assigned-jobs'; 
+}
+
+function redirectToEmployeeHistory() {
+  window.location.href = '/employee-history-page'; 
+}

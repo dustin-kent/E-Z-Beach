@@ -1,7 +1,32 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/api/user-pending-reservations');
-        const pendingReservations = await response.json();
+        const userTypeResponse = await fetch('/api/user-type');
+        const userType = await userTypeResponse.json();
+
+        let pendingReservationsResponse;
+        if (userType === 'employee') {
+            pendingReservationsResponse = await fetch('/api/all-pending-reservations');
+        } else {
+            pendingReservationsResponse = await fetch('/api/user-pending-reservations');
+        }
+        const pendingReservations = await pendingReservationsResponse.json();
+
+        // Sort pendingReservations based on date and then time
+        pendingReservations.sort((a, b) => {
+            const aDate = new Date(a.reservationDate);
+            const bDate = new Date(b.reservationDate);
+
+            if (aDate < bDate) {
+                return -1;
+            } else if (aDate > bDate) {
+                return 1;
+            } else {
+                const aTime = parseInt(a.reservationTime);
+                const bTime = parseInt(b.reservationTime);
+                return aTime - bTime;
+            }
+        });
+
 
         const reservationDetailsContainer = document.getElementById('reservationDetails');
 
@@ -9,6 +34,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             for (const pendingReservation of pendingReservations) {
                 const reservationDiv = document.createElement('div');
                 reservationDiv.className = 'reservation';
+
+                // Add status indicator based on reservation status
+                const status = document.createElement('p');
+                status.className = 'reservation-status';
+                status.textContent = pendingReservation.status === 'accepted' ? 'Status: Accepted' : 'Status: Pending';
+                reservationDiv.appendChild(status);
                 
                 const fullName = document.createElement('p');
                 fullName.innerHTML = `<strong>Reservation Name:</strong> ${pendingReservation.fullName}`;
@@ -97,8 +128,48 @@ document.addEventListener('DOMContentLoaded', async () => {
                 reservationDiv.appendChild(cartItemsList);
             }
 
+             // Extract cart total and calculate the employee payment
+        if (userType === 'employee') {
+             const cartTotal = pendingReservation.cartTotal;
+             const employeePayment = calculateEmployeePayment(cartTotal);
+
+            // Add employee payment element
+             const employeePaymentElement = document.createElement('p');
+             employeePaymentElement.innerHTML = `<strong>Employee Payment:</strong> $${employeePayment}`;
+             reservationDiv.appendChild(employeePaymentElement);
+        }
+
+            // Add accept button conditionally based on user type
+            if (userType === 'employee') {
+                const acceptButton = document.createElement('button');
+                acceptButton.textContent = 'Accept Job/Reservation';
+                acceptButton.className = 'accept-button';
+                acceptButton.addEventListener('click', async () => {
+                    try {
+                        
+                        const acceptResponse = await fetch(`/api/accept-reservation/${pendingReservation._id}`, {
+                            method: 'POST',
+                        });
+                        const acceptData = await acceptResponse.json();
+                        console.log(acceptData.message);
+
+                        // Remove the accepted reservation from the DOM
+                        reservationDiv.remove();
+                      
+                        // Notify the user that their reservation has been accepted
+                        notifyUserReservationAccepted();
+                        
+                    } catch (acceptError) {
+                        console.error('Error accepting reservation:', acceptError);
+                    }
+
+                    
+                });
+                reservationDiv.appendChild(acceptButton);
+            }
 
                 // Create the delete button for each reservation
+            if (userType === 'user') {
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
                 deleteButton.className = 'delete-button'; // Set the class name for the delete button
@@ -118,6 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
                 reservationDiv.appendChild(deleteButton);
+            }
 
                 reservationDetailsContainer.appendChild(reservationDiv);
             }
@@ -150,3 +222,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error fetching pending reservations:', error);
     }
 });
+
+// Function to calculate employee payment (60% of cart total)
+function calculateEmployeePayment(cartTotal) {
+    const employeePayment = cartTotal * 0.6;
+    return employeePayment.toFixed(2); // Round to two decimal places
+}

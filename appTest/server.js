@@ -9,6 +9,7 @@ const uuid = require('uuid');
 const app = express();
 const port = 3000;
 const ejs = require('ejs');
+const twilio = require('twilio');
 
 // Load the environment variables from the .env file
 dotenv.config();
@@ -150,7 +151,7 @@ app.post('/submit-user', async (req, res) => {
       email: req.body.email,
       phone: req.body.phone,
       streetAddress: req.body.streetAddress,
-      city: req.body.city,
+      city: req.body.city, 
       state: req.body.state,
       zipCode: req.body.zipCode,
       role: req.body.role, 
@@ -480,8 +481,6 @@ app.delete('/api/delete-reservation/:reservationId', async (req, res) => {
   }
 });
 
-
-
 // Route to fetch user's reservation history
 app.get('/api/user-reservation-history', async (req, res) => {
   try {
@@ -504,6 +503,222 @@ app.get('/api/user-reservation-history', async (req, res) => {
   }
 });
 
+// API route to fetch user type (user or employee)
+app.get('/api/user-type', (req, res) => {
+  // Determine the user type based on session data (user or employee)
+  if (req.session.user.role === 'employee') {
+      res.json('employee');
+  } else {
+      res.json('user');
+  }
+});
+
+// API route to fetch all pending reservations for employees
+app.get('/api/all-pending-reservations', async (req, res) => {
+  try {
+      const client = await mongodb.MongoClient.connect(dbURI);
+      const db = client.db(dbName);
+
+      // Retrieve all pending reservations from the database for employees
+      const pendingReservations = await db.collection('pending_reservations').find({}).toArray();
+
+      await client.close();
+
+      res.json(pendingReservations);
+  } catch (error) {
+      console.error('Error fetching pending reservations:', error);
+      res.status(500).json({ error: 'An error occurred while fetching pending reservations.' });
+  }
+});
+
+// For accepting reservations
+app.post('/api/accept-reservation/:reservationId', async (req, res) => {
+  const reservationId = req.params.reservationId;
+  const employeeId = req.session.user._id; // Use req.session.user to get the employee ID
+
+  try {
+    const client = await mongodb.MongoClient.connect(dbURI);
+    const db = client.db(dbName);
+
+    const reservation = await db.collection('pending_reservations').findOne({ _id: new mongodb.ObjectId(reservationId) });
+
+    if (!reservation) {
+      client.close();
+      return res.status(404).json({ message: 'Reservation not found.' });
+    }
+
+    // Update the status of the reservation to 'Accepted'
+    await db.collection('pending_reservations').updateOne(
+      { _id: new mongodb.ObjectId(reservationId) },
+      { $set: { status: 'Accepted' } }
+    );
+
+    // Remove the reservation from the user's pending reservations
+    await db.collection('users').updateOne(
+      { _id: new mongodb.ObjectId(reservation.userId) },
+      { $pull: { pendingReservations: new mongodb.ObjectId(reservationId) } }
+    );
+
+    // Send SMS notification to the user
+    const reservationPhoneNumber = reservation.phoneNumber;
+    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+    const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+
+    const clientTwilio = twilio(twilioAccountSid, twilioAuthToken);
+
+// Parse the cartTotal string to a number
+const cartTotalNumber = parseFloat(reservation.cartTotal);
+
+// Construct the SMS message with reservation details
+const messageBody = `Congratulations ${reservation.fullName}, your reservation has been accepted and assigned. Details:\n` +
+  `Reservation Date: ${reservation.reservationDate}\n` +
+  `Reservation Time: ${reservation.reservationTime}\n` +
+  `Total Price: $${cartTotalNumber.toFixed(2)}\n` +
+  `Assigned Employee: ${req.session.user.firstName} ${req.session.user.lastName}\n`;
+
+    await clientTwilio.messages.create({
+      body: messageBody,
+      from: twilioPhoneNumber,
+      to: reservationPhoneNumber,
+    });
+
+    // Move the reservation to the assigned_jobs collection with the employee ID
+    const assignedJob = {
+      ...reservation,
+      assignedTo: employeeId,
+    };
+    await db.collection('assigned_jobs').insertOne(assignedJob);
+
+    // Delete the reservation from the pending_reservations collection
+    await db.collection('pending_reservations').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
+
+    client.close();
+
+    res.json({ message: 'Reservation accepted and moved to assigned jobs.' });
+  } catch (error) {
+    console.error('Error accepting reservation:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
+// Route to fetch assigned jobs for employees
+app.get('/api/assigned-jobs', async (req, res) => {
+  try {
+    const client = await mongodb.MongoClient.connect(dbURI);
+    const db = client.db(dbName);
+
+    
+    const loggedInUserId = req.session.user._id; // Use req.session.user to get the employee's ID
+
+    // Retrieve assigned jobs that match the logged-in employee ID
+    const assignedJobs = await db.collection('assigned_jobs').find({ assignedTo: loggedInUserId }).toArray();
+
+    await client.close();
+
+    res.json(assignedJobs);
+  } catch (error) {
+    console.error('Error fetching assigned jobs:', error);
+    res.status(500).json({ error: 'An error occurred while fetching assigned jobs.' });
+  }
+});
+
+app.put('/api/complete-reservation/:reservationId', async (req, res) => {
+  try {
+    const client = await mongodb.MongoClient.connect(dbURI);
+    const db = client.db(dbName);
+
+    const reservationId = req.params.reservationId;
+
+    // Find the reservation in the assigned_jobs collection
+    const reservation = await db.collection('assigned_jobs').findOne({ _id: new mongodb.ObjectId(reservationId) });
+
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found.' });
+    }
+
+    // Move the reservation to the reservation_history collection
+    reservation.status = 'completed'; // Update the status
+    await db.collection('reservation_history').insertOne(reservation);
+
+    // Delete the reservation from the assigned_jobs collection
+    await db.collection('assigned_jobs').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
+
+    client.close();
+
+    res.json({ message: 'Reservation completed and moved to history successfully' });
+  } catch (error) {
+    console.error('Error completing reservation:', error);
+    res.status(500).json({ error: 'An error occurred while completing the reservation' });
+  }
+});
+
+app.put('/api/cancel-reservation/:reservationId', async (req, res) => {
+  try {
+      const client = await mongodb.MongoClient.connect(dbURI);
+      const db = client.db(dbName);
+
+      const reservationId = req.params.reservationId;
+
+      // Find the reservation in the assigned_jobs collection
+      const reservation = await db.collection('assigned_jobs').findOne({ _id: new mongodb.ObjectId(reservationId) });
+
+      if (!reservation) {
+          return res.status(404).json({ error: 'Reservation not found.' });
+      }
+
+      // Update the reservation status to canceled
+      reservation.status = 'returned/pending';
+
+      // Move the reservation back to the pending_reservations collection
+      await db.collection('pending_reservations').insertOne(reservation);
+
+      // Delete the reservation from the assigned_jobs collection
+      await db.collection('assigned_jobs').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
+
+      client.close();
+
+      res.json({ message: 'Reservation canceled successfully' });
+  } catch (error) {
+      console.error('Error canceling reservation:', error);
+      res.status(500).json({ error: 'An error occurred while canceling the reservation' });
+  }
+});
+
+
+app.get('/api/completed-jobs', async (req, res) => {
+  try {
+    const userId = req.session.user._id; // Get the user's ID from the session
+    const client = await mongodb.MongoClient.connect(dbURI);
+    const db = client.db(dbName);
+
+    // Find reservation history for the logged-in user/employee
+    const completedHistory = await db.collection('reservation_history').find({
+      assignedTo: userId,
+      status: 'completed'
+    }).toArray();
+
+    client.close();
+
+    res.json(completedHistory);
+  } catch (error) {
+    console.error('Error fetching completed history:', error);
+    res.status(500).json({ error: 'An error occurred while fetching completed history' });
+  }
+});
+
+app.get('/employee-history-page', (req, res) => {
+  res.render('employee-history-page'); // Render the EJS template for the employee history page
+});
+
+// Route for the "view available reservations" page
+app.get('/available-reservations-page', (req, res) => {
+  res.render('available-reservations-page'); // Render the EJS template
+});
+
+app.get('/assigned-jobs', (req, res) => {
+  res.render('assigned-jobs'); // Render the EJS template
+});
 
 // Start the server
 app.listen(port, () => {

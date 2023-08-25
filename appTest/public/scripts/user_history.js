@@ -100,8 +100,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 reservationDetailsContainer.appendChild(reservationDiv);
 
                 const status = document.createElement('p');
-        status.innerHTML = `<strong>Status:</strong> ${pendingReservation.status}`;
-        reservationDiv.appendChild(status);4
+                status.innerHTML = `<strong>Status:</strong> ${pendingReservation.status}`;
+                reservationDiv.appendChild(status);
             }
         } else {
             reservationDetailsContainer.innerHTML = '<p>No reservations history.</p>';
