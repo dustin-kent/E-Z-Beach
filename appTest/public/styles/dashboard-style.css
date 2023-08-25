@@ -29,8 +29,8 @@ body {
 
 /* Style for the "User Dashboard" title */
 h2 {
-    font-family: 'Great Vibes', cursive;
-    font-size: 48px;
+    font-family: 'Great Vibes';
+    font-size: 60px;
     margin-bottom: 20px;
 }
 
@@ -38,7 +38,7 @@ h2 {
 .welcome-message {
     font-family: 'Raleway', sans-serif;
     font-size: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
 }
 
 /* Style for the links container */
@@ -150,4 +150,16 @@ h2 {
     .container {
         max-width: 90%;
     }
+}
+
+.employeeIntro {
+    padding-bottom:  50px 0;
+    font-size: 20px ;
+    font-weight: bold;
+
+}
+
+.userIntro {
+    padding-bottom:  50px 0;
+    font-size: 20px;
 }

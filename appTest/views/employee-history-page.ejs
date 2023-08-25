@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@1,300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles/employee-history.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -15,12 +16,83 @@
             <button id="homeButton">Home</button>
             <button id="logoutButton">Logout</button>
         </div></h2>
-
+        <div id="totalEarnings"></div>
         <div id="reservationDetails">
             <!-- This container will be populated with reservation history details -->
         </div>
+        
+        <canvas id="earningsChart"></canvas>
+        
     </div>
 
+    
+
+
     <script src="/scripts/reservation_history.js"></script> 
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch reservation history data
+            const response = await fetch('/api/completed-jobs');
+            const reservationHistory = await response.json();
+        
+            // Create arrays to store dates and earnings
+            const dates = [];
+            const earnings = [];
+        
+            // Calculate total earnings and populate the dates and earnings arrays
+            let totalEarnings = 0;
+            for (const reservation of reservationHistory) {
+                const cartTotal = parseFloat(reservation.cartTotal);
+                const employeePayment = calculateEmployeePayment(cartTotal);
+                totalEarnings += parseFloat(employeePayment);
+        
+                // Extract the date from the reservation object (assuming you have a date property)
+                const reservationDate = new Date(reservation.reservationDate);
+                const dateString = reservationDate.toLocaleDateString(); // Convert to a string like "MM/DD/YYYY"
+        
+                if (!dates.includes(dateString)) {
+                    dates.push(dateString);
+                    earnings.push(parseFloat(employeePayment));
+                } else {
+                    const index = dates.indexOf(dateString);
+                    earnings[index] += parseFloat(employeePayment);
+                }
+            }
+        
+            // Update the content of the total earnings element
+            const totalEarningsElement = document.getElementById('totalEarnings');
+            totalEarningsElement.textContent = `Total Earnings: $${totalEarnings.toFixed(2)}`;
+        
+            // Create and update the earnings chart
+            const earningsChart = new Chart(document.getElementById('earningsChart'), {
+                type: 'bar',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Earnings',
+                        data: earnings,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        
+        });
+        </script>
+        
+
 </body>
 </html>

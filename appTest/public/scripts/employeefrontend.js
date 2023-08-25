@@ -1,3 +1,5 @@
+
+
 // Define the completeReservation function
 async function completeReservation(reservationId) {
     try {
@@ -174,9 +176,11 @@ async function cancelReservation(reservationId) {
                                 try {
                                     // Call the completeReservation function
                                     await completeReservation(assignedJob._id);
+
                                     
                                     // Remove the reservation from the DOM if needed
                                     jobDiv.remove();
+
 
                                 } catch (error) {
                                     console.error('Error completing reservation:', error);

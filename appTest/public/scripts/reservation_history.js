@@ -29,10 +29,6 @@ async function populateReservationHistory() {
               fullName.innerHTML = `<strong>Reservation Name:</strong> ${reservation.fullName}`;
               reservationDiv.appendChild(fullName);
 
-              const phoneNumber = document.createElement('p');
-              phoneNumber.innerHTML = `<strong>Phone Number:</strong> ${reservation.phoneNumber}`;
-              reservationDiv.appendChild(phoneNumber);
-
               const reservationDate = document.createElement('p');
               reservationDate.innerHTML = `<strong>Reservation Date:</strong> ${reservation.reservationDate}`;
               reservationDiv.appendChild(reservationDate);
@@ -45,14 +41,6 @@ async function populateReservationHistory() {
               reservationType.innerHTML = `<strong>Reservation Type:</strong> ${reservation.reservationType}`;
               reservationDiv.appendChild(reservationType);
 
-              const pickupDropOffLocationType = document.createElement('p');
-              pickupDropOffLocationType.innerHTML = `<strong>Pickup/Drop-off Location Type:</strong> ${reservation.pickupDropOffLocationType}`;
-              reservationDiv.appendChild(pickupDropOffLocationType);
-
-              const streetAddress = document.createElement('p');
-              streetAddress.innerHTML = `<strong>Street Address:</strong> ${reservation.streetAddress}`;
-              reservationDiv.appendChild(streetAddress);
-
               const city = document.createElement('p');
               city.innerHTML = `<strong>City:</strong> ${reservation.city}`;
               reservationDiv.appendChild(city);
@@ -60,10 +48,6 @@ async function populateReservationHistory() {
               const state = document.createElement('p');
               state.innerHTML = `<strong>State:</strong> ${reservation.state}`;
               reservationDiv.appendChild(state);
-
-              const zip = document.createElement('p');
-              zip.innerHTML = `<strong>Zip:</strong> ${reservation.zip}`;
-              reservationDiv.appendChild(zip);
 
               const vehicleMake = document.createElement('p');
               vehicleMake.innerHTML = `<strong>Vehicle Make:</strong> ${reservation.vehicleMake}`;
@@ -77,10 +61,6 @@ async function populateReservationHistory() {
               vehicleColor.innerHTML = `<strong>Vehicle Color:</strong> ${reservation.vehicleColor}`;
               reservationDiv.appendChild(vehicleColor);
 
-              const licensePlate = document.createElement('p');
-              licensePlate.innerHTML = `<strong>License Plate:</strong> ${reservation.licensePlate}`;
-              reservationDiv.appendChild(licensePlate);
-
               const beachAccess = document.createElement('p');
               beachAccess.innerHTML = `<strong>Beach Access Point:</strong> ${reservation.beachAccess}`;
               reservationDiv.appendChild(beachAccess);
@@ -93,7 +73,7 @@ async function populateReservationHistory() {
               totalCost.innerHTML = `<strong>Total Cost:</strong> $${reservation.cartTotal}`;
               reservationDiv.appendChild(totalCost);
 
-              // Check if cart items exist 
+              // Check if cart items exist and their length is greater than 0
               if (reservation.cartItems && reservation.cartItems.length > 0) {
                   const cartItemsHeader = document.createElement('p');
                   cartItemsHeader.innerHTML = '<strong>Cart Items:</strong>';
@@ -116,7 +96,7 @@ async function populateReservationHistory() {
               }
 
               reservationDiv.appendChild(cartItemsContainer);
-              
+              // ... Continue populating other reservation details ...
 
               reservationDetailsContainer.appendChild(reservationDiv);
               
@@ -129,10 +109,37 @@ async function populateReservationHistory() {
   }
 }
 
-// Call the function when the DOM content is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  populateReservationHistory();
+// ... (other parts of your code)
+
+document.addEventListener('DOMContentLoaded', async () => {
+    populateReservationHistory();
+
+    // Get the total earnings element by its ID
+    const totalEarningsElement = document.getElementById('totalEarnings');
+
+    try {
+        // Fetch reservation history data from your backend API
+        const response = await fetch('/api/completed-jobs'); 
+        const reservationHistory = await response.json();
+
+        // Calculate total earnings
+        let totalEarnings = 0; // Initialize total earnings
+        for (const reservation of reservationHistory) {
+            const cartTotal = parseFloat(reservation.cartTotal); // Convert cartTotal to a number
+            const employeePayment = calculateEmployeePayment(cartTotal);
+            totalEarnings += parseFloat(employeePayment);
+        }
+
+        // Update the content of the total earnings element
+        totalEarningsElement.textContent = `Total Earnings: $${totalEarnings.toFixed(2)}`;
+    } catch (error) {
+        console.error('Error fetching reservation history:', error);
+    }
 });
+
+
+// ... (rest of your code)
+
 
 function calculateEmployeePayment(cartTotal) {
   const employeePayment = cartTotal * 0.6;
@@ -157,5 +164,46 @@ logoutButton.addEventListener('click', async () => {
         window.location.href = '/login-page.html';
     } catch (error) {
         console.error('Error logging out:', error);
+    }
+});
+
+// Get the canvas element
+const canvas = document.getElementById('earningsChart');
+
+// Extract the date and earnings data from your reservation history
+const dates = reservationHistory.map(reservation => reservation.reservationDate);
+const earnings = reservationHistory.map(reservation => parseFloat(calculateEmployeePayment(reservation.cartTotal)));
+
+// Create the chart
+const ctx = canvas.getContext('2d');
+const earningsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: dates,
+        datasets: [{
+            label: 'Daily Earnings',
+            data: earnings,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'category',
+                title: {
+                    display: true,
+                    text: 'Date'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Earnings'
+                }
+            }
+        }
     }
 });

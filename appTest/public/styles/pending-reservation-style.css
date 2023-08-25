@@ -49,4 +49,9 @@ body {
     
 }
 
-
+.pendingInfo {
+    background: linear-gradient(to right, rgba(0, 123, 255, 0.3), rgba(255, 165, 0, 0.3), rgba(128, 0, 128, 0.3)); /* Adjust the alpha value */
+    padding-bottom:  10px 0;
+    color: white;
+    
+}

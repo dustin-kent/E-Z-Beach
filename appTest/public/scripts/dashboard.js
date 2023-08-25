@@ -32,6 +32,28 @@ function logout() {
   });
 }
 
+// Get the delete account button element
+const deleteAccountButton = document.getElementById('deleteAccountButton');
+
+// Click event listener to the button
+deleteAccountButton.addEventListener('click', async () => {
+    try {
+        const response = await fetch('/api/delete-account', {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        
+        window.location.href = '/login-page.html';
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        // Handle error scenario
+    }
+});
+
+
 // Functions to redirect to the "different pages"
 function redirectToScheduleReservationPage() {
   window.location.href = '/schedule-reservation-page';

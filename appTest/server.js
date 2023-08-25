@@ -157,11 +157,11 @@ app.post('/submit-user', async (req, res) => {
       role: req.body.role, 
     };
 
-    console.log('userData:', userData); // console.log to see the userData object  REMOVE LATER AFTER TESTING!!!!!!
+    console.log('userData:', userData); // console.log to see the userData object  
 
     const existingUser = await db.collection('users').findOne({ email: userData.email });
 
-    console.log('existingUser:', existingUser); // console.log to see the existing user, if any   REMOVE LATER AFTER TESTING!!!!!!!
+    console.log('existingUser:', existingUser); // console.log to see the existing user, if any   
 
     if (existingUser) {
       client.close();
@@ -349,8 +349,11 @@ app.get('/admin-dashboard', async (req, res) => {
     const employees = await db.collection('employees').find({}).toArray();
     const admins = await db.collection('admin').find({}).toArray();
 
+    // Fetch reservation history data from the database
+    const reservationHistory = await db.collection('reservation_history').find({}).toArray();
+
     console.log('Admins:', admins);
-    res.render('admin-dashboard', { users, employees, admins });
+    res.render('admin-dashboard', { users, employees, admins, reservationHistory });
 
     client.close();
   } catch (error) {
@@ -358,6 +361,7 @@ app.get('/admin-dashboard', async (req, res) => {
     res.status(500).send('An error occurred while rendering the admin dashboard.');
   }
 });
+
 
 // POST route to handle user logout
 app.post('/logout', (req, res) => {
@@ -625,33 +629,51 @@ app.get('/api/assigned-jobs', async (req, res) => {
 
 app.put('/api/complete-reservation/:reservationId', async (req, res) => {
   try {
-    const client = await mongodb.MongoClient.connect(dbURI);
-    const db = client.db(dbName);
+      const client = await mongodb.MongoClient.connect(dbURI);
+      const db = client.db(dbName);
 
-    const reservationId = req.params.reservationId;
+      const reservationId = req.params.reservationId;
 
-    // Find the reservation in the assigned_jobs collection
-    const reservation = await db.collection('assigned_jobs').findOne({ _id: new mongodb.ObjectId(reservationId) });
+      // Find the reservation in the assigned_jobs collection
+      const reservation = await db.collection('assigned_jobs').findOne({ _id: new mongodb.ObjectId(reservationId) });
 
-    if (!reservation) {
-      return res.status(404).json({ error: 'Reservation not found.' });
-    }
+      if (!reservation) {
+          client.close();
+          return res.status(404).json({ error: 'Reservation not found.' });
+      }
 
-    // Move the reservation to the reservation_history collection
-    reservation.status = 'completed'; // Update the status
-    await db.collection('reservation_history').insertOne(reservation);
+      // Move the reservation to the reservation_history collection
+      reservation.status = 'completed'; // Update the status
+      await db.collection('reservation_history').insertOne(reservation);
 
-    // Delete the reservation from the assigned_jobs collection
-    await db.collection('assigned_jobs').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
+      // Delete the reservation from the assigned_jobs collection
+      await db.collection('assigned_jobs').deleteOne({ _id: new mongodb.ObjectId(reservationId) });
 
-    client.close();
+      // Send SMS notification for initially completed job
+      const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+      const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+      const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
-    res.json({ message: 'Reservation completed and moved to history successfully' });
+      const clientTwilio = twilio(twilioAccountSid, twilioAuthToken);
+
+      const reservationPhoneNumber = reservation.phoneNumber;
+      const messageBody = `Hello ${reservation.fullName}, your reservation on ${reservation.reservationDate} at ${reservation.reservationTime} has been completed. Your card has now been charged. Thank you for using our services!`;
+
+      await clientTwilio.messages.create({
+          body: messageBody,
+          from: twilioPhoneNumber,
+          to: reservationPhoneNumber,
+      });
+
+      client.close();
+
+      res.json({ message: 'Reservation completed and moved to history successfully' });
   } catch (error) {
-    console.error('Error completing reservation:', error);
-    res.status(500).json({ error: 'An error occurred while completing the reservation' });
+      console.error('Error completing reservation:', error);
+      res.status(500).json({ error: 'An error occurred while completing the reservation' });
   }
 });
+
 
 app.put('/api/cancel-reservation/:reservationId', async (req, res) => {
   try {
@@ -666,6 +688,30 @@ app.put('/api/cancel-reservation/:reservationId', async (req, res) => {
       if (!reservation) {
           return res.status(404).json({ error: 'Reservation not found.' });
       }
+
+      // Send SMS notification to the user
+      const reservationPhoneNumber = reservation.phoneNumber;
+      const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+      const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+      const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+
+      const clientTwilio = twilio(twilioAccountSid, twilioAuthToken);
+
+      // Parse the cartTotal string to a number
+      const cartTotalNumber = parseFloat(reservation.cartTotal);
+
+      // Construct the SMS message with reservation details
+      const messageBody = `Important Notice! ${reservation.fullName}, your recently accepted/assigned reservation has been rejected, returned to you, and is currently in pending status. Please wait while we try to reassign your reservation. Details:\n` +
+          `Reservation Date: ${reservation.reservationDate}\n` +
+          `Reservation Time: ${reservation.reservationTime}\n` +
+          `Total Price: $${cartTotalNumber.toFixed(2)}\n`;
+          
+
+      await clientTwilio.messages.create({
+          body: messageBody,
+          from: twilioPhoneNumber,
+          to: reservationPhoneNumber,
+      });
 
       // Update the reservation status to canceled
       reservation.status = 'returned/pending';
@@ -686,26 +732,51 @@ app.put('/api/cancel-reservation/:reservationId', async (req, res) => {
 });
 
 
+
 app.get('/api/completed-jobs', async (req, res) => {
   try {
-    const userId = req.session.user._id; // Get the user's ID from the session
-    const client = await mongodb.MongoClient.connect(dbURI);
-    const db = client.db(dbName);
+      const userId = req.session.user._id; // Get the user's ID from the session
+      const client = await mongodb.MongoClient.connect(dbURI);
+      const db = client.db(dbName);
 
-    // Find reservation history for the logged-in user/employee
-    const completedHistory = await db.collection('reservation_history').find({
-      assignedTo: userId,
-      status: 'completed'
-    }).toArray();
+      // Find reservation history for the logged-in user/employee
+      const completedHistory = await db.collection('reservation_history').find({
+          assignedTo: userId,
+          status: 'completed'
+      }).toArray();
 
-    client.close();
+      client.close();
 
-    res.json(completedHistory);
+      res.json(completedHistory);
   } catch (error) {
-    console.error('Error fetching completed history:', error);
-    res.status(500).json({ error: 'An error occurred while fetching completed history' });
+      console.error('Error fetching completed history:', error);
+      res.status(500).json({ error: 'An error occurred while fetching completed history' });
   }
 });
+
+app.delete('/api/delete-account', async (req, res) => {
+  try {
+      const userId = req.session.user._id; // Get the user's ID from the session
+      const client = await mongodb.MongoClient.connect(dbURI);
+      const db = client.db(dbName);
+
+      // Delete the user's account from the database
+      await db.collection('users').deleteOne({ _id: new mongodb.ObjectId(userId) });
+
+
+
+      client.close();
+
+      // Clear the session and log the user out
+      req.session.destroy();
+
+      res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting account:', error);
+      res.status(500).json({ error: 'An error occurred while deleting the account' });
+  }
+});
+
 
 app.get('/employee-history-page', (req, res) => {
   res.render('employee-history-page'); // Render the EJS template for the employee history page
@@ -724,10 +795,6 @@ app.get('/assigned-jobs', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-
-
-
 
 
 
