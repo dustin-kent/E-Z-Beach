@@ -1,1 +1,2 @@
 # E-Z-Beach
+This program is for my SWVD 691 Software Development Capstone.  Think of this application as a doordash/uber application in which a user can schedule someone to come and pickup and setup thier beach gear or take it down and deliver it back to thier room/vehicle.  This application has sms capabilities for alerts and real-time tracking of reservations from pending, to assigned, to rejected/completed. 
