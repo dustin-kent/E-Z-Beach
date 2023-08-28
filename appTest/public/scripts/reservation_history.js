@@ -96,7 +96,7 @@ async function populateReservationHistory() {
               }
 
               reservationDiv.appendChild(cartItemsContainer);
-              // ... Continue populating other reservation details ...
+             
 
               reservationDetailsContainer.appendChild(reservationDiv);
               
@@ -108,8 +108,6 @@ async function populateReservationHistory() {
       console.error('Error fetching reservation history:', error);
   }
 }
-
-// ... (other parts of your code)
 
 document.addEventListener('DOMContentLoaded', async () => {
     populateReservationHistory();
@@ -137,8 +135,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-
-// ... (rest of your code)
 
 
 function calculateEmployeePayment(cartTotal) {
