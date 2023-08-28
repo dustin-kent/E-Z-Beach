@@ -46,7 +46,7 @@
                 const employeePayment = calculateEmployeePayment(cartTotal);
                 totalEarnings += parseFloat(employeePayment);
         
-                // Extract the date from the reservation object (assuming i have my date property in db. Make sure db has element for reservationDate.  Dont make that mistake again!!!!)
+                // Extract the date from the reservation object (assuming i have my date property in db. Make sure db has element for reservationDate.  Dont make that mistake again!!!!
                 const reservationDate = new Date(reservation.reservationDate);
                 const dateString = reservationDate.toLocaleDateString(); // Convert to a string like "MM/DD/YYYY"
         
