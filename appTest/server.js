@@ -563,7 +563,7 @@ app.post('/api/accept-reservation/:reservationId', async (req, res) => {
       { $pull: { pendingReservations: new mongodb.ObjectId(reservationId) } }
     );
 
-    // Send SMS notification to the user
+    // Send SMS notification to the user///  real phone numbers will get an sms message
     const reservationPhoneNumber = reservation.phoneNumber;
     const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
     const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
